@@ -53,3 +53,4 @@
 *.unity linguist-generated
 Assets filter=lfs diff=lfs merge=lfs -text
 /Assets filter=lfs diff=lfs merge=lfs -text
+SampleScene.unity filter=lfs diff=lfs merge=lfs -text
