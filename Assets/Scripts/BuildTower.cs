@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEngine.Tilemaps;
 
 public class BuildTower : MonoBehaviour
 {
@@ -14,36 +15,21 @@ public class BuildTower : MonoBehaviour
     [SerializeField]
     Color Red, Green;
 
-    bool canBuild = true;
+    [SerializeField]
+    Tilemap tileMap;
 
-    // Start is called before the first frame update
-    void Start()
+    TowerShop shop;
+
+    private void Start()
     {
-        
+        shop = GameObject.Find("ShopController").GetComponent<TowerShop>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if ((Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1)) && canBuild)
-        {
-            StartCoroutine(MoveBuildTower(Towers[0]));
-        }
-        if ((Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Keypad2)) && canBuild)
-        {
-            StartCoroutine(MoveBuildTower(Towers[1]));
-        }
-        if ((Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Keypad3)) && canBuild)
-        {
-            StartCoroutine(MoveBuildTower(Towers[2]));
-        }
-    }
-
-    IEnumerator MoveBuildTower(Tower tower)
+    public IEnumerator MoveBuildTower(Tower tower)
     {
         GameObject towerObject = Instantiate(tower.TowerPrefab);
         GameObject overlay = Instantiate(Overlay);
-        canBuild = false;
+        shop.canBuild = false;
         overlay.GetComponent<SpriteRenderer>().color = Green;
         while (true)
         {
@@ -51,7 +37,7 @@ public class BuildTower : MonoBehaviour
             towerObject.transform.position = mousePos;
             overlay.transform.position = new Vector2(Mathf.Floor(mousePos.x) + 0.5f, Mathf.Floor(mousePos.y) + 0.5f);
 
-            if (GameObject.FindObjectsOfType<GameObject>().Any(c => c.name != "PlacingOverlay(Clone)" && c.transform.position == new Vector3(Mathf.Floor(mousePos.x) + 0.5f, Mathf.Floor(mousePos.y) + 0.5f)))
+            if (GameObject.FindObjectsOfType<GameObject>().Any(c => c.name != "PlacingOverlay(Clone)" && c.name != "Wall(Clone)" && c.transform.position == new Vector3(Mathf.Floor(mousePos.x) + 0.5f, Mathf.Floor(mousePos.y) + 0.5f)))
             {
                 overlay.GetComponent<SpriteRenderer>().color = Red;
             }
@@ -60,11 +46,11 @@ public class BuildTower : MonoBehaviour
                 overlay.GetComponent<SpriteRenderer>().color = Green;
             }
 
-            if (Input.GetMouseButton(0) && !GameObject.FindObjectsOfType<GameObject>().Any(c => c.name != "PlacingOverlay(Clone)" && c.transform.position == new Vector3(Mathf.Floor(mousePos.x) + 0.5f, Mathf.Floor(mousePos.y) + 0.5f)))
+            if (Input.GetMouseButton(0) && !GameObject.FindObjectsOfType<GameObject>().Any(c => c.name != "PlacingOverlay(Clone)" && c.name != "Wall(Clone)" && c.transform.position == new Vector3(Mathf.Floor(mousePos.x) + 0.5f, Mathf.Floor(mousePos.y) + 0.5f)) && tileMap.HasTile(tileMap.WorldToCell(mousePos)))
             {
                 towerObject.transform.position = new Vector2(Mathf.Floor(mousePos.x) + 0.5f, Mathf.Floor(mousePos.y) + 0.5f);
+                shop.canBuild = true;
                 Destroy(overlay);
-                canBuild = true;
                 break;
             }
 

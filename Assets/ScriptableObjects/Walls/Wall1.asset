@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ObjectName: Wall(Clone)
   Name: Wall1
-  WallPrefab: {fileID: 4824637958269827208, guid: 634db9f0d5c37ab47b767fc675056369, type: 3}
+  WallPrefab: {fileID: 6049462062507422759, guid: deb67aaaf1ee50c4b836b18971cd3ef5, type: 3}

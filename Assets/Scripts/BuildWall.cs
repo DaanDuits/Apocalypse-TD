@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEngine.Tilemaps;
 
 public class BuildWall : MonoBehaviour
 {
@@ -12,24 +13,20 @@ public class BuildWall : MonoBehaviour
     Wall[] Walls;
 
     [SerializeField]
-    Color Red, Green;
+    Tilemap tileMap;
 
-    bool canBuild = true;
     bool Left, Right = false;
 
-    // Start is called before the first frame update
-    void Start()
-    {
+    TowerShop shop;
 
+    private void Start()
+    {
+        shop = GameObject.Find("ShopController").GetComponent<TowerShop>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(1) && canBuild)
-        {
-            StartCoroutine(MoveBuildWall(Walls[0]));
-        }
         if (Input.GetKeyDown(KeyCode.E))
         {
             Right = true;
@@ -40,17 +37,14 @@ public class BuildWall : MonoBehaviour
         }
     }
 
-    IEnumerator MoveBuildWall(Wall wall)
+    public IEnumerator MoveBuildWall(Wall wall)
     {
         GameObject wallObject = Instantiate(wall.WallPrefab);
-        GameObject overlay = Instantiate(Overlay);
-        canBuild = false;
-        overlay.GetComponent<SpriteRenderer>().color = Green;
+        shop.canBuild = false;
         while (true)
         {
             Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             wallObject.transform.position = new Vector2(Mathf.Floor(mousePos.x) + 0.5f, Mathf.Floor(mousePos.y) + 0.5f);
-            overlay.transform.position = new Vector2(Mathf.Floor(mousePos.x) + 0.5f, Mathf.Floor(mousePos.y) + 0.5f);
 
             if (Right)
             {
@@ -63,25 +57,15 @@ public class BuildWall : MonoBehaviour
                 wallObject.transform.Rotate(0, 0, 90);
             }
 
-            if (GameObject.FindObjectsOfType<GameObject>().Any(c => c.name != "PlacingOverlay(Clone)" && c.name != wall.ObjectName && c.transform.position == new Vector3(Mathf.Floor(mousePos.x) + 0.5f, Mathf.Floor(mousePos.y) + 0.5f)))
-            {
-                overlay.GetComponent<SpriteRenderer>().color = Red;
-            }
-            else
-            {
-                overlay.GetComponent<SpriteRenderer>().color = Green;
-            }
-
-            if (Input.GetMouseButton(0) && !GameObject.FindObjectsOfType<GameObject>().Any(c => c.name != "PlacingOverlay(Clone)" && c.name != wall.ObjectName && c.transform.position == new Vector3(Mathf.Floor(mousePos.x) + 0.5f, Mathf.Floor(mousePos.y) + 0.5f)))
-            {
-                wallObject.name = "Wall";
+            if (Input.GetMouseButton(0) && !GameObject.FindObjectsOfType<GameObject>().Any(c => c != wallObject && (c.name == "Wall(Clone)" && c.transform.GetChild(0).position == wallObject.transform.GetChild(0).position)) && tileMap.HasTile(tileMap.WorldToCell(mousePos)))
+            { 
                 wallObject.transform.position = new Vector2(Mathf.Floor(mousePos.x) + 0.5f, Mathf.Floor(mousePos.y) + 0.5f);
-                Destroy(overlay);
-                canBuild = true;
+                shop.canBuild = true;
                 break;
             }
 
             yield return new WaitForEndOfFrame();
         }
+        
     }
 }
