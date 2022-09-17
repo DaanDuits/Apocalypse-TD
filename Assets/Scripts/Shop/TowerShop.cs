@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class TowerShop : MonoBehaviour
 {
-    [SerializeField]
-    ResourceCounter counter;
+    public ResourceCounter counter;
 
     [SerializeField]
     BuildTower buildT;
@@ -19,7 +18,7 @@ public class TowerShop : MonoBehaviour
     {
         if (counter.CheckRemovedResources(price) && canBuild)
         {
-            StartCoroutine(buildW.MoveBuildWall(wall));
+            StartCoroutine(buildW.MoveBuildWall(wall, price));
             counter.Removeresources(price);
         }
     }
@@ -27,7 +26,7 @@ public class TowerShop : MonoBehaviour
     {
         if (counter.CheckRemovedResources(price) && canBuild)
         {
-            StartCoroutine(buildT.MoveBuildTower(tower));
+            StartCoroutine(buildT.MoveBuildTower(tower, price));
             counter.Removeresources(price);
         }
     }

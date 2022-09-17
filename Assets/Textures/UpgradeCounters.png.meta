@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 2837b91e43746ae46b60cf0b27047e3a
+guid: ba1b62bf6cb80cf47b62193cda47184a
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -48,7 +48,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 200
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -106,13 +106,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Tower1_0
+      name: UpgradeCounters_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 200
-        height: 200
+        width: 100
+        height: 100
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -120,20 +120,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: bba4df5c9a16de6468ebfda39bef5887
-      internalID: 596051265
+      spriteID: 4b250e362a455d2488cea726b9b6d09a
+      internalID: -1477647595
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower1_1
+      name: UpgradeCounters_1
       rect:
         serializedVersion: 2
-        x: 210
+        x: 110
         y: 0
-        width: 200
-        height: 200
+        width: 100
+        height: 100
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,29 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: fde31553301cedd4983e44a755d39ec9
-      internalID: 785451152
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Tower1_2
-      rect:
-        serializedVersion: 2
-        x: 420
-        y: 0
-        width: 200
-        height: 200
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 7af0e0fea988fc6488dcbbfb0c764534
-      internalID: -628028703
+      spriteID: 27faade923a36fe45b8ea27c2d14a3a6
+      internalID: 189914907
       vertices: []
       indices: 
       edges: []
@@ -179,9 +158,8 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Tower1_0: 596051265
-      Tower1_2: -628028703
-      Tower1_1: 785451152
+      UpgradeCounters_1: 189914907
+      UpgradeCounters_0: -1477647595
   spritePackingTag: 
   pSDRemoveMatte: 0
   userData: 
