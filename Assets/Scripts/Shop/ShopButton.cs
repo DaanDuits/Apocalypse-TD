@@ -9,9 +9,6 @@ public class ShopButton : MonoBehaviour
     [SerializeField]
     Wall wall;
 
-    [SerializeField]
-    int ResourcePrice;
-
     TowerShop shop;
 
     private void Start()
@@ -21,10 +18,10 @@ public class ShopButton : MonoBehaviour
 
     public void Wall()
     {
-        shop.BuildWall(wall, ResourcePrice);
+        shop.Build(wall);
     }
     public void Tower()
     {
-        shop.BuildTower(tower, ResourcePrice);
+        shop.Build(tower);
     }
 }

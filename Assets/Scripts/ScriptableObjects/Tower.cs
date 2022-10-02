@@ -6,6 +6,9 @@ using UnityEngine;
 public class Tower : ScriptableObject
 {
     public string Name;
+    public int price;
 
     public GameObject TowerPrefab;
+    public GameObject overlayPrefab;
+    public GameObject shooterPrefab;
 }

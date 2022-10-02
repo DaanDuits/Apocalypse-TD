@@ -5,8 +5,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "NewWall", menuName = "TowerDefense/Wall")]
 public class Wall : ScriptableObject
 {
-    public string ObjectName;
     public string Name;
+    public int price;
 
     public GameObject WallPrefab;
 }

@@ -7,27 +7,26 @@ public class TowerShop : MonoBehaviour
     public ResourceCounter counter;
 
     [SerializeField]
-    BuildTower buildT;
-
-    [SerializeField]
     BuildWall buildW;
+    [SerializeField]
+    BuildTower buildT;
 
     public bool canBuild = true;
 
-    public void BuildWall(Wall wall, int price)
+    public void Build(Tower tower) => Build(null, tower);
+    public void Build(Wall wall) => Build(wall, null);
+    public void Build(Wall wall, Tower tower)
     {
-        if (counter.CheckRemovedResources(price) && canBuild)
+        if (tower != null)
         {
-            StartCoroutine(buildW.MoveBuildWall(wall, price));
-            counter.Removeresources(price);
+            if (counter.CheckRemovedResources(tower.price) && canBuild)
+                StartCoroutine(buildT.MoveBuildTower(tower));
         }
-    }
-    public void BuildTower(Tower tower, int price)
-    {
-        if (counter.CheckRemovedResources(price) && canBuild)
+
+        else
         {
-            StartCoroutine(buildT.MoveBuildTower(tower, price));
-            counter.Removeresources(price);
+            if (counter.CheckRemovedResources(wall.price) && canBuild)
+                StartCoroutine(buildW.MoveBuildWall(wall, false));
         }
     }
 }

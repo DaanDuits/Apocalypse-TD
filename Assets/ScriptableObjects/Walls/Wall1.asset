@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39914486a21211f4ba2afe30d44bfd97, type: 3}
   m_Name: Wall1
   m_EditorClassIdentifier: 
-  ObjectName: Wall(Clone)
   Name: Wall1
+  price: 10
   WallPrefab: {fileID: 6049462062507422759, guid: deb67aaaf1ee50c4b836b18971cd3ef5, type: 3}

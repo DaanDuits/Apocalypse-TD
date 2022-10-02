@@ -13,4 +13,7 @@ MonoBehaviour:
   m_Name: Tower3
   m_EditorClassIdentifier: 
   Name: Tower3
+  price: 50
   TowerPrefab: {fileID: 943833289863639444, guid: 497d6796a274f4a4ebf13363f178e288, type: 3}
+  overlayPrefab: {fileID: 2198619111498740741, guid: 9a101c2c04950f8458cdd45d2daecfce, type: 3}
+  shooterPrefab: {fileID: 5726659423690994472, guid: 9ee636c3da3e8a444a4cc416e84021d6, type: 3}

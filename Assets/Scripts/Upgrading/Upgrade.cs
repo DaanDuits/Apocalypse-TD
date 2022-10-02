@@ -22,7 +22,6 @@ public class Upgrade : MonoBehaviour
     UpgradePanelData currentData;
     private void Start()
     {
-        shopPanel.SetActive(true);
         upgradePanel.SetActive(false);
         shop = GameObject.Find("ShopController").GetComponent<TowerShop>();
         text = upgradePanel.transform.Find("PriceCounter").GetComponent<TMP_Text>();
