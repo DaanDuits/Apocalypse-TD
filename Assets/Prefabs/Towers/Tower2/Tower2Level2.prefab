@@ -104,6 +104,7 @@ MonoBehaviour:
   Level: 2
   Upgrade: {fileID: 4993333576903790461, guid: 2db321e6ca17a2441aed7fd689fd6d80, type: 3}
   nextCost: 50
+  rangeCircle: {fileID: 4689485433135390410, guid: d6a6a9bc0fd2953409774de6379aa317, type: 3}
 --- !u!60 &4997053679131769593
 PolygonCollider2D:
   m_ObjectHideFlags: 0

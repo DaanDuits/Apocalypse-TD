@@ -23,4 +23,8 @@ public class UpgradePanelData : MonoBehaviour
     {
         panel.SetPanel(this);
     }
+    private void OnDestroy()
+    {
+        Destroy(GameObject.Find("Range(Clone)"));
+    }
 }

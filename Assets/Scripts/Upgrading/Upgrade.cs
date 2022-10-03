@@ -15,6 +15,11 @@ public class Upgrade : MonoBehaviour
     [SerializeField]
     GameObject shopPanel;
 
+
+    [SerializeField]
+    GameObject rangeCircle;
+    GameObject rC;
+
     TowerShop shop;
 
     TMP_Text text;
@@ -29,9 +34,16 @@ public class Upgrade : MonoBehaviour
 
     public void SetPanel(UpgradePanelData data)
     {
+        Destroy(GameObject.Find("Range(Clone)"));
         if (shop.canBuild)
         {
             currentData = data;
+
+            rC = Instantiate(rangeCircle);
+            rC.transform.position = data.transform.position;
+            TowerBehaviour tB = data.transform.GetChild(0).gameObject.GetComponent<TowerBehaviour>();
+            rC.transform.localScale = new Vector2(tB.range * 2, tB.range * 2);
+
             for (int i = 0; i < upgradePanel.transform.Find("UpgradeAmount").childCount; i++)
             {
                 Destroy(upgradePanel.transform.Find("UpgradeAmount").GetChild(i).gameObject);
@@ -61,11 +73,18 @@ public class Upgrade : MonoBehaviour
             text.text = "Price: " + data.nextCost.ToString();
         }
     }
+
+    public void ExitMenu()
+    {
+        Destroy(GameObject.Find("Range(Clone)"));
+    }
+
     public void UpgradeCurrent()
     {
         if (shop.counter.CheckRemovedResources(currentData.nextCost))
         {
             GameObject upgrade = Instantiate(currentData.Upgrade, currentData.transform.position, currentData.transform.rotation);
+            Instantiate(currentData.transform.GetChild(0).gameObject, upgrade.transform);
             shop.counter.Removeresources(currentData.nextCost);
             Destroy(currentData.gameObject);
             SetPanel(upgrade.GetComponent<UpgradePanelData>());

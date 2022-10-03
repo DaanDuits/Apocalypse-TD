@@ -11,20 +11,19 @@ public class TowerBehaviour : MonoBehaviour
     [SerializeField]
     public List<Transform> enemies = new List<Transform>();
     [SerializeField]
-    float Range, fireRate = 2f, rotationOffset, rotationSpeed, fireSpread;
+    float fireRate = 2f, rotationOffset, rotationSpeed, fireSpread;
+    public float range;
     float timer;
     [SerializeField]
     int bulletAmount;
 
     // Update is called once per frame
     private void Start()
-    {
-        Range *= 0.45f;
+    {   
         timer = fireRate;
     }
     void Update()
     {
-        this.transform.GetChild(1).localScale = new Vector2(Range / 0.45f * 2, Range / 0.45f * 2);
         UpdateEnemies();
         if (GetClosestEnemy() != null)
         {
@@ -66,7 +65,7 @@ public class TowerBehaviour : MonoBehaviour
         {
             for (int i = 0; i < enemies.Count; i++)
             {
-                if (Vector2.Distance(enemies[i].position, transform.position) > Range)
+                if (Vector2.Distance(enemies[i].position, transform.position) > range)
                 {
                     enemies.RemoveAt(i);
                 }
@@ -76,7 +75,7 @@ public class TowerBehaviour : MonoBehaviour
         GameObject[] objects = GameObject.FindObjectsOfType<GameObject>();
         foreach (GameObject c in objects)
         {
-            if (c.tag == "Enemy" && (transform.position - c.transform.position).magnitude <= Range && !enemies.Contains(c.transform))
+            if (c.tag == "Enemy" && Vector2.Distance(transform.position, c.transform.position) <= range && !enemies.Contains(c.transform))
             {
                 enemies.Add(c.transform);
             }
