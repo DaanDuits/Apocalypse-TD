@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: -6966893457609217697}
   - component: {fileID: 3259070941673578085}
   - component: {fileID: -2333900139251391664}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Tower1Level1
   m_TagString: Tower
   m_Icon: {fileID: 0}
@@ -104,7 +104,6 @@ MonoBehaviour:
   Level: 1
   Upgrade: {fileID: 3967508563086857449, guid: 4ee577797c7c9e844af276fe35d49452, type: 3}
   nextCost: 15
-  rangeCircle: {fileID: 4689485433135390410, guid: d6a6a9bc0fd2953409774de6379aa317, type: 3}
 --- !u!58 &3259070941673578085
 CircleCollider2D:
   m_ObjectHideFlags: 0

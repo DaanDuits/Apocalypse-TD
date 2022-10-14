@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5668632990200080545}
   - component: {fileID: 5088711405101362658}
   - component: {fileID: 5155352906653924567}
-  - component: {fileID: 806353495517097468}
+  - component: {fileID: 9067555632816878444}
   m_Layer: 0
   m_Name: Enemy1
   m_TagString: Enemy
@@ -33,7 +33,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &5668632990200080545
 SpriteRenderer:
@@ -115,16 +115,16 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 0.0001
+  m_Mass: 1
   m_LinearDrag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 5
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
---- !u!114 &806353495517097468
+--- !u!114 &9067555632816878444
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -133,17 +133,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 6367960011601504861}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: de5c82af6339c164095493bbfdfb6395, type: 3}
+  m_Script: {fileID: 11500000, guid: 58fda39b72c13314dbb0664ac9ed6f01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  speed: 2
+  rotationSpeed: 5
   rb: {fileID: 0}
   shop: {fileID: 0}
-  speed: 2
   hp: 100
-  damage: 15
-  price: 10
+  damage: 10
+  price: 25
   sliderPrefab: {fileID: 157438869582992476, guid: 7a2c6560949630046b7a995a5c7c7f90, type: 3}
-  effectSpeed: 15
-  rotationSpeed: 10
-  knockBackTime: 1
-  knockBackForce: 1
+  effectSpeed: 5

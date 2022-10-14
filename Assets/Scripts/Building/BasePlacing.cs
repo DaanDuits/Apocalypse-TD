@@ -13,8 +13,6 @@ public class BasePlacing : MonoBehaviour
 
     [SerializeField]
     Tilemap map;
-    [SerializeField]
-    GridController grid;
 
     bool build = false;
     // Start is called before the first frame update
@@ -45,7 +43,6 @@ public class BasePlacing : MonoBehaviour
 
             if (build && CanPlace(x, y))
             {
-                grid.CreateFlowField(newBase.transform.position);
                 shopObject.SetActive(true);
                 break;
             }

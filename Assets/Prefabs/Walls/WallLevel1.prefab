@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6224946788272585}
   - component: {fileID: 1620386149288555360}
-  m_Layer: 9
+  m_Layer: 8
   m_Name: Square
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: 4838630493476820961}
   - component: {fileID: -8174536044338781263}
   - component: {fileID: -5590819146508801109}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: WallLevel1
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -238,7 +238,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2869209117944130561}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Center
   m_TagString: Untagged
   m_Icon: {fileID: 0}

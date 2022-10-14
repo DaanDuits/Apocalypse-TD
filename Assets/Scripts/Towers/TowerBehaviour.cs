@@ -4,18 +4,14 @@ using UnityEngine;
 
 public class TowerBehaviour : MonoBehaviour
 {
-    [SerializeField]
-    GameObject bulletPrefab;
-    [SerializeField]
-    Transform barrel;
-    [SerializeField]
+    public GameObject bulletPrefab;
+    public Transform barrel;
     public List<Transform> enemies = new List<Transform>();
-    [SerializeField]
-    float fireRate = 2f, rotationOffset, rotationSpeed, fireSpread;
+    
+    public float fireRate = 2f, rotationOffset, rotationSpeed, fireSpread;
     public float range;
     float timer;
-    [SerializeField]
-    int bulletAmount;
+    public int bulletAmount;
 
     // Update is called once per frame
     private void Start()
@@ -32,7 +28,7 @@ public class TowerBehaviour : MonoBehaviour
                 GameObject pro = Instantiate(bulletPrefab);
                 pro.transform.position = barrel.position;
                 BulletBehaviour bB = pro.GetComponent<BulletBehaviour>();
-                EnemyBehaviour eB = GetClosestEnemy().gameObject.GetComponent<EnemyBehaviour>();
+                Unit eB = GetClosestEnemy().gameObject.GetComponent<Unit>();
 
                 if (InterceptionDirection(GetClosestEnemy().position, barrel.position, eB.rb.velocity, bB.speed, out Vector2 result, out Vector2 fullResult))
                 {
@@ -41,7 +37,7 @@ public class TowerBehaviour : MonoBehaviour
                     if (timer <= 0)
                     {
                         float rnd = Random.Range(-fireSpread, fireSpread) / 450;
-                        bB.Setup(fullResult + new Vector2(rnd, rnd));
+                        bB.Setup(fullResult + new Vector2(rnd, rnd), transform.parent);
                         Destroy(pro, bB.airTime);
                         if (i == bulletAmount - 1)
                             timer = fireRate;

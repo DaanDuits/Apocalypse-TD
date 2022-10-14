@@ -7,6 +7,7 @@ public class BulletBehaviour : MonoBehaviour
     public float speed;
     public float airTime;
     public float hitLifeTime;
+    public Transform shooter;
 
     Vector3 dir;
     public float damage;
@@ -17,8 +18,9 @@ public class BulletBehaviour : MonoBehaviour
         transform.position += speed * Time.deltaTime * dir.normalized;
     }
 
-    public void Setup(Vector3 uDir)
+    public void Setup(Vector3 uDir, Transform _shooter)
     {
         dir = uDir;
+        shooter = _shooter;
     }
 }
