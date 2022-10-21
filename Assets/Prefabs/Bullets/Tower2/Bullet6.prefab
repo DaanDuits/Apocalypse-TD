@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5521461688047548036}
   - component: {fileID: 3504903384144196386}
   m_Layer: 0
-  m_Name: Bullet1
+  m_Name: Bullet6
   m_TagString: Projectile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 5521461688047548037}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.004, z: 0}
-  m_LocalScale: {x: 0.04, y: 0.04, z: 0.16866452}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -75,9 +75,9 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 4
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
-  m_Color: {r: 1, g: 0.48802394, b: 0, a: 1}
+  m_Color: {r: 1, g: 0.05882353, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -128,7 +128,7 @@ TrailRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_Time: 0.1
   m_Parameters:
     serializedVersion: 3
@@ -138,7 +138,7 @@ TrailRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.044476416
+        value: 0.10138407
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -159,8 +159,8 @@ TrailRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 1, g: 0.4862745, b: 0, a: 1}
-      key1: {r: 1, g: 0.84727615, b: 0.6839622, a: 1}
+      key0: {r: 1, g: 0.4862745, b: 0, a: 0.43137255}
+      key1: {r: 1, g: 0.84727615, b: 0.6839622, a: 0.43137255}
       key2: {r: 1, g: 1, b: 1, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
@@ -211,10 +211,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 20
-  airTime: 0.5
-  hitLifeTime: 0.04
-  damage: 20
-  tower: {fileID: 0}
+  airTime: 0.9
+  hitLifeTime: 0.08
+  shooter: {fileID: 0}
+  damage: 70
 --- !u!58 &3504903384144196386
 CircleCollider2D:
   m_ObjectHideFlags: 0

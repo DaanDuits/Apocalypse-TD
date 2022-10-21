@@ -11,6 +11,7 @@ public class Node : IHeapItem<Node>
     public int gCost;
     public int hCost;
     public Node parent;
+    public List<Node> neighbours;
     int heapIndex;
 
     public Node(bool _walkable, Vector2 _worldPos, int _gridX, int _gridY)

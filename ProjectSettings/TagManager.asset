@@ -7,11 +7,14 @@ TagManager:
   - Wall
   - Base
   - Tower
+  - Enemy
+  - Shooter
+  - Projectile
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - PostProcessing
   - Water
   - UI
   - 

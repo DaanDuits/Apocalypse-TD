@@ -16,4 +16,4 @@ MonoBehaviour:
   price: 10
   TowerPrefab: {fileID: 4993333576903790461, guid: 84e5fb9f2d7aa3749b310c376df6369e, type: 3}
   overlayPrefab: {fileID: 2198619111498740741, guid: 9a101c2c04950f8458cdd45d2daecfce, type: 3}
-  shooterPrefab: {fileID: 5726659423690994472, guid: 9ee636c3da3e8a444a4cc416e84021d6, type: 3}
+  shooterPrefab: {fileID: 5726659423690994472, guid: 70cb412441b521844b77b554607a2f65, type: 3}

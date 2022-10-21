@@ -189,7 +189,9 @@ MonoBehaviour:
   upgradeAmount: 3
   Level: 1
   Upgrade: {fileID: 6049462062507422759, guid: 39d1f46a010a8374baa45430057e0049, type: 3}
-  nextCost: 25
+  shooterUpgrade: {fileID: 0}
+  nextCost: 50
+  isWall: 1
 --- !u!61 &-8174536044338781263
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -228,7 +230,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33b37930a8152ca4695e608d4e89a857, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hp: 50
+  slider: {fileID: 0}
+  hp: 25
 --- !u!1 &6456478105823161697
 GameObject:
   m_ObjectHideFlags: 0

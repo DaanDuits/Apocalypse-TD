@@ -7,7 +7,7 @@ public class PlayLevel : MonoBehaviour
 {
     public void Onclick()
     {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene("Level");
     }
 
     public void GetDifficulty()

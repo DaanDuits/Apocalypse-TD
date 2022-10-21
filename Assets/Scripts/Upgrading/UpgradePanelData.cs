@@ -9,10 +9,12 @@ public class UpgradePanelData : MonoBehaviour
     public int Level;
 
     public GameObject Upgrade;
+    public GameObject shooterUpgrade;
 
     public int nextCost;
 
     Upgrade panel;
+    public bool isWall;
 
     private void Start()
     {
@@ -21,7 +23,7 @@ public class UpgradePanelData : MonoBehaviour
 
     private void OnMouseDown()
     {
-        panel.SetPanel(this);
+        panel.SetPanel(this, isWall);
     }
     private void OnDestroy()
     {

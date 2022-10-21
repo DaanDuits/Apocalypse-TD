@@ -32,17 +32,24 @@ public class Upgrade : MonoBehaviour
         text = upgradePanel.transform.Find("PriceCounter").GetComponent<TMP_Text>();
     }
 
-    public void SetPanel(UpgradePanelData data)
+    public void SetPanel(UpgradePanelData data, bool isWall)
     {
         Destroy(GameObject.Find("Range(Clone)"));
         if (shop.canBuild)
         {
             currentData = data;
 
-            rC = Instantiate(rangeCircle);
-            rC.transform.position = data.transform.position;
-            TowerBehaviour tB = data.transform.GetChild(0).gameObject.GetComponent<TowerBehaviour>();
-            rC.transform.localScale = new Vector2(tB.range * 2, tB.range * 2);
+            if (!isWall)
+            {
+                rC = Instantiate(rangeCircle);
+                rC.transform.position = data.transform.position;
+                TowerBehaviour tB = data.transform.GetChild(0).gameObject.GetComponent<TowerBehaviour>();
+                if (tB.range >= 5f)
+                    rC.transform.localScale = new Vector2(2, 2);
+                else
+                    rC.transform.localScale = new Vector2(tB.range * 2, tB.range * 2);
+            }
+            
 
             for (int i = 0; i < upgradePanel.transform.Find("UpgradeAmount").childCount; i++)
             {
@@ -84,10 +91,12 @@ public class Upgrade : MonoBehaviour
         if (shop.counter.CheckRemovedResources(currentData.nextCost))
         {
             GameObject upgrade = Instantiate(currentData.Upgrade, currentData.transform.position, currentData.transform.rotation);
-            Instantiate(currentData.transform.GetChild(0).gameObject, upgrade.transform);
+            if (!upgrade.GetComponent<UpgradePanelData>().isWall)
+                Instantiate(currentData.shooterUpgrade, upgrade.transform);
+
             shop.counter.Removeresources(currentData.nextCost);
             Destroy(currentData.gameObject);
-            SetPanel(upgrade.GetComponent<UpgradePanelData>());
+            SetPanel(upgrade.GetComponent<UpgradePanelData>(), upgrade.GetComponent<UpgradePanelData>().isWall);
         }
     }
 

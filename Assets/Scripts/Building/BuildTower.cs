@@ -6,14 +6,11 @@ using UnityEngine.Tilemaps;
 
 public class BuildTower : MonoBehaviour
 {
-    [SerializeField]
-    GameObject Overlay;
+    public GameObject Overlay;
 
-    [SerializeField]
-    Color Red, Green;
+    public Color Red, Green;
 
-    [SerializeField]
-    Tilemap tileMap;
+   Tilemap tileMap;
 
     TowerShop shop;
 
@@ -32,6 +29,7 @@ public class BuildTower : MonoBehaviour
 
     private void Start()
     {
+        tileMap = GameObject.Find("Level").transform.GetChild(1).GetComponent<Tilemap>();
         shop = GameObject.Find("ShopController").GetComponent<TowerShop>();
     }
 
@@ -52,7 +50,7 @@ public class BuildTower : MonoBehaviour
             Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             towerObject.transform.position = mousePos;
             overlay.transform.position = new Vector3(Mathf.Floor(mousePos.x) + 0.5f, Mathf.Floor(mousePos.y) + 0.5f);
-            if (Input.GetMouseButton(1))
+            if (Input.GetMouseButtonDown(1))
             {
                 Destroy(overlay);
                 Destroy(towerObject);
@@ -61,9 +59,8 @@ public class BuildTower : MonoBehaviour
             }
             if (CanPlace(towerObject, overlay.transform.position))
             {
-                
                 overlay.GetComponent<SpriteRenderer>().color = Green;
-                if (Input.GetMouseButton(0))
+                if (Input.GetMouseButtonDown(0))
                 {
                     shop.counter.Removeresources(tower.price);
                     GameObject shooter = Instantiate(tower.shooterPrefab, towerObject.transform);
@@ -82,7 +79,7 @@ public class BuildTower : MonoBehaviour
             {
                 overlay.GetComponent<SpriteRenderer>().color = Red;
             }
-            yield return new WaitForEndOfFrame();
+            yield return null;
         }
     }
 }

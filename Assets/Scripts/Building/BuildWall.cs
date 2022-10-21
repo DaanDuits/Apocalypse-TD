@@ -6,15 +6,10 @@ using UnityEngine.Tilemaps;
 
 public class BuildWall : MonoBehaviour
 {
-
-    [SerializeField]
     Tilemap tileMap;
-
-    bool Left, Right = false;
 
     TowerShop shop;
 
-    bool build = false;
     bool CanPlace(GameObject wall, Vector2 gridPos)
     {
         //Check if the given wall can be placed on the given position
@@ -31,24 +26,8 @@ public class BuildWall : MonoBehaviour
 
     private void Start()
     {
+        tileMap = GameObject.Find("Level").transform.GetChild(1).GetComponent<Tilemap>();
         shop = GameObject.Find("ShopController").GetComponent<TowerShop>();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            Right = true;
-        }
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            Left = true;
-        }
-        if (Input.GetMouseButtonDown(0))
-        {
-            build = true;
-        }
     }
 
     public IEnumerator MoveBuildWall(Wall wall, bool isCopy) => MoveBuildWall(wall, isCopy, Vector3.zero);
@@ -68,19 +47,17 @@ public class BuildWall : MonoBehaviour
             Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             wallObject.transform.position = new Vector3(Mathf.Floor(mousePos.x) + 0.5f, Mathf.Floor(mousePos.y) + 0.5f);
 
-            if (Right)
+            if (Input.GetKeyDown(KeyCode.E))
             {
-                Right = false;
                 wallObject.transform.Rotate(0, 0, -90);
             }
-            if (Left)
+            if (Input.GetKeyDown(KeyCode.Q))
             {
-                Left = false;
                 wallObject.transform.Rotate(0, 0, 90);
             }
 
 
-            if (Input.GetMouseButton(1))
+            if (Input.GetMouseButtonDown(1))
             {
                 Destroy(wallObject);
                 shop.canBuild = true;
@@ -89,7 +66,7 @@ public class BuildWall : MonoBehaviour
 
             if (CanPlace(wallObject, wallObject.transform.position))
             {
-                if (build)
+                if (Input.GetMouseButtonDown(0))
                 {
                     shop.canBuild = true;
                     shop.counter.Removeresources(wall.price);
@@ -102,16 +79,12 @@ public class BuildWall : MonoBehaviour
                     }
                     else
                     {
-                        build = false;
                         StartCoroutine(MoveBuildWall(wall, true, wallObject.transform.rotation.eulerAngles));
                         break;
                     }
                 }
             }
-
-            build = false;
-
-            yield return new WaitForEndOfFrame();
+            yield return null;
         }
     }
 }

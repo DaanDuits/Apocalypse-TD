@@ -28,8 +28,9 @@ public class MapGenerator : MonoBehaviour
         public Material mat;
     }
 
-    private void Start()
+    private void Awake()
     {
+        seed = PlayerPrefs.GetString("Seed");
         GenerateMap();
     }
 
@@ -62,16 +63,16 @@ public class MapGenerator : MonoBehaviour
                         Vector3 pos = new Vector2(x, y);
                         if (levels.Count > 0)
                         {
-                            if (GetClosestLevel(levels, 0.8f, pos) == null)
+                            if (GetClosestLevel(levels, 0.5f, pos) == null)
                             {
-                                GameObject level = Instantiate(levelObjs[levelType]);
+                                GameObject level = Instantiate(levelObjs[levelType], transform);
                                 level.transform.position = pos;
                                 levels.Add(level.transform);
                             }
                         }
                         else
                         {
-                            GameObject level = Instantiate(levelObjs[levelType]);
+                            GameObject level = Instantiate(levelObjs[levelType], transform);
                             level.transform.position = pos;
                             levels.Add(level.transform);
                         }

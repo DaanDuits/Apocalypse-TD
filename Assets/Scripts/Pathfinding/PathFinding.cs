@@ -7,7 +7,6 @@ public class PathFinding : MonoBehaviour
 {
     PathRequestManager requestManager;
     GridController grid;
-
     private void Awake()
     {
         requestManager = GetComponent<PathRequestManager>();
@@ -21,12 +20,11 @@ public class PathFinding : MonoBehaviour
 
     IEnumerator FindPath(Vector2 startPos, Vector2 targetPos)
     {
-        targetPos -= grid.offset;
         Vector2[] wayPoints = new Vector2[0];
         bool pathSucces = false;
 
-        Node startNode = grid.NodeFromWorldPoint(startPos);
-        Node targetNode = grid.NodeFromWorldPoint(targetPos);
+        Node startNode = grid.NodeFromWorldPoint(startPos, false);
+        Node targetNode = grid.NodeFromWorldPoint(targetPos, true);
 
         if (startNode.walkable && targetNode.walkable)
         {
@@ -46,7 +44,7 @@ public class PathFinding : MonoBehaviour
                     break;
                 }
 
-                foreach (Node neighbour in grid.GetNeighbours(currentNode))
+                foreach (Node neighbour in currentNode.neighbours)
                 {
                     if (!neighbour.walkable || closedSet.Contains(neighbour))
                     {
@@ -86,7 +84,13 @@ public class PathFinding : MonoBehaviour
             path.Add(currentNode);
             currentNode = currentNode.parent;
         }
-        Vector2[] wayPoints = SimplifyPath(path);
+        List<Vector2> nodePoints = new List<Vector2>();
+        for (int i = 0; i < path.Count; i++)
+        {
+            nodePoints.Add(path[i].worldPos);
+        }
+
+        Vector2[] wayPoints = nodePoints.ToArray();
         Array.Reverse(wayPoints); 
         return wayPoints;
 

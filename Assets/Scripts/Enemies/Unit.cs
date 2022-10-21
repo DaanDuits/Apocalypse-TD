@@ -6,16 +6,14 @@ using UnityEngine.UI;
 public class Unit : MonoBehaviour
 {
     public Transform target;
-    Transform mainTarget;
     public float speed = 20;
     Vector2[] path;
     int targetIndex;
     public float rotationSpeed;
-
-    [HideInInspector]
-    public Rigidbody2D rb;
     
     public TowerShop shop;
+
+    public Vector2 velocity;
 
     public float hp, damage;
     public int price;
@@ -26,14 +24,14 @@ public class Unit : MonoBehaviour
     float takenDamage;
     public float effectSpeed;
 
+    public List<string> tags;    
+
     private void Start()
     {
         target = GameObject.Find("MainBase(Clone)").transform;
-        mainTarget = target;
         PathRequestManager.RequestPath(transform.position, target.position, onPathFound);
         takenDamage = hp;
         shop = GameObject.FindObjectOfType<TowerShop>();
-        rb = gameObject.GetComponent<Rigidbody2D>();
         sliderObj = Instantiate(sliderPrefab, GameObject.Find("WorldCanvas").transform);
         slider = sliderObj.GetComponent<Slider>();
         slider.maxValue = hp;
@@ -53,14 +51,14 @@ public class Unit : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        GameObject pro = collision.gameObject;
-        if (pro.CompareTag("Projectile"))
+        GameObject go = collision.gameObject;
+        if (go.CompareTag("Projectile"))
         {
-            BulletBehaviour bb = pro.GetComponent<BulletBehaviour>();
+            BulletBehaviour bb = go.GetComponent<BulletBehaviour>();
 
             takenDamage = slider.value - bb.damage;
 
-            Destroy(pro, bb.hitLifeTime);
+            Destroy(go, bb.hitLifeTime);
         }
     }
     private void OnDestroy()
@@ -75,6 +73,8 @@ public class Unit : MonoBehaviour
                     tB.enemies.Remove(transform);
             }
         }
+        EnemyController ec = FindObjectOfType<EnemyController>();
+        ec.unitsInGame.Remove(gameObject);
         shop.counter.Addresources(price);
         Destroy(sliderObj);
     }
@@ -97,21 +97,22 @@ public class Unit : MonoBehaviour
         {
             if ((currentWayPoint - transform.position).magnitude <= 0.2f)
             {
-                targetIndex++;
-                if (targetIndex >= path.Length)
+                if (targetIndex <= path.Length)
                 {
-                    yield break;
+                    if (targetIndex != path.Length - 1)
+                    {
+                        targetIndex++;
+                    }
+                    currentWayPoint = path[targetIndex];
                 }
-
-                currentWayPoint = path[targetIndex];
             }
             Vector2 moveDirection = (currentWayPoint - transform.position).normalized;
             //Rotation
             float angle = Mathf.Atan2(moveDirection.x, moveDirection.y) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.AngleAxis(-angle, transform.forward), Time.deltaTime * rotationSpeed);
 
-            transform.position = Vector3.MoveTowards(transform.position, currentWayPoint, Time.deltaTime * speed);
-            rb.velocity = moveDirection * speed;
+            transform.position += (Vector3)moveDirection * Time.deltaTime * speed;
+            velocity = moveDirection * speed;
 
             yield return null;
         }
@@ -134,6 +135,60 @@ public class Unit : MonoBehaviour
                     Gizmos.DrawLine(path[i - 1], path[i]);
                 }
             }
+        }
+    }
+
+    bool DealDamage;
+
+    public float damageCooldown;
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (tags.Contains(collision.gameObject.tag))
+        {
+            DealDamage = true;
+            velocity = Vector2.zero;
+            StartCoroutine(DealDamageOverTime(collision.gameObject));
+        }
+    }
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (tags.Contains(collision.gameObject.tag))
+        {
+            DealDamage = false;
+        }
+    }
+
+    IEnumerator DealDamageOverTime(GameObject obj)
+    {
+        BuildingBehaviour bb = obj.GetComponent<BuildingBehaviour>();
+        float time = damageCooldown;
+        switch (obj.tag)
+        {
+            case "Base":
+                StartCoroutine(bb.TakeDamage(damage));
+                break;
+            default:
+                bb.hp -= damage;
+                break;
+        }
+        while (DealDamage)
+        {
+            if (time <= 0)
+            {
+                switch (obj.tag)
+                {
+                    case "Base":
+                        StartCoroutine(bb.TakeDamage(damage));
+                        break;
+                    default:
+                        bb.hp -= damage;
+                        break;
+                }
+                time = damageCooldown;
+            }
+            time -= Time.deltaTime;
+            yield return null;
         }
     }
 }

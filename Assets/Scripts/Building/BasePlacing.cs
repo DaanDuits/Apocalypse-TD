@@ -6,57 +6,62 @@ using UnityEngine.UI;
 
 public class BasePlacing : MonoBehaviour
 {
-    [SerializeField]
-    GameObject baseObject, shopObject;
+    public GameObject baseObject, shopObject, overlay;
+    public Color Green, Red;
 
     GameObject newBase;
 
-    [SerializeField]
-    Tilemap map;
+    public Tilemap map;
 
-    bool build = false;
     // Start is called before the first frame update
     void Start()
     {
+        map = GameObject.Find("Level").transform.GetChild(1).GetComponent<Tilemap>();
         shopObject.SetActive(false);
         newBase = Instantiate(baseObject);
         StartCoroutine(BuildBase());
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            build = true;
-        }
-    }
-
     IEnumerator BuildBase()
     {
+        GameObject newOverlay = Instantiate(overlay);
+        newOverlay.transform.localScale = newOverlay.transform.localScale * 2;
+
+        newOverlay.GetComponent<SpriteRenderer>().color = Green;
+
         while (true)
         {
             Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             float x = Mathf.Round(mousePos.x); 
             float y = Mathf.Round(mousePos.y);
             newBase.transform.position = new Vector2(x, y);
+            newOverlay.transform.position = new Vector2(x, y);
 
-            if (build && CanPlace(x, y))
+            if (CanPlace(x, y))
             {
-                shopObject.SetActive(true);
-                break;
+                newOverlay.GetComponent<SpriteRenderer>().color = Green;
+                if (Input.GetMouseButtonDown(0))
+                {
+                    shopObject.SetActive(true);
+                    Destroy(newOverlay);
+                    break;
+                }
             }
-            yield return new WaitForEndOfFrame();
+            else
+                newOverlay.GetComponent<SpriteRenderer>().color = Red;
+
+            yield return null;
         }
     }
 
     bool CanPlace(float x, float y)
     {
+        x += 0.5f;
+        y += 0.5f;
         if (map.HasTile(map.WorldToCell(new Vector2(x, y))) && map.HasTile(map.WorldToCell(new Vector2(x - 1, y))) && map.HasTile(map.WorldToCell(new Vector2(x, y - 1))) && map.HasTile(map.WorldToCell(new Vector2(x - 1, y - 1))))
         {
             return true;
         }
-        build = false;
         return false;
     }
 }

@@ -2,18 +2,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LevelBehaviour : MonoBehaviour
+public class LevelBehaviour : MonoBehaviour, IDataPersistance
 {
-    public static bool canClick = true;
+    public static bool canClick;
     public float scaleSpeed;
-    
+
+    bool hasCompleted, onEasy, onHard, onNormal;
+    int levelId;
+
     Vector3 ogScale, toScale;
+
+    Transform flags;
 
     ButtonBehaviour button;
     CameraBehaviour cam;
 
     private void Awake()
     {
+        flags = transform.GetChild(0);
+        for (int i = 0; i < transform.parent.childCount; i++)
+        {
+            levelId = i;
+        }
+        canClick = true;
         button = GameObject.Find("Image").GetComponent<ButtonBehaviour>();
     }
 
@@ -23,6 +34,44 @@ public class LevelBehaviour : MonoBehaviour
         ogScale = transform.localScale;
         toScale = ogScale;
         button.gameObject.transform.parent.gameObject.SetActive(false);
+    }
+    public void LoadData(GameData data)
+    {
+        data.playedLevelsEasy.TryGetValue(levelId, out onEasy);
+        if (onEasy)
+            flags.GetChild(1).gameObject.SetActive(true);
+
+        data.playedLevelsNormal.TryGetValue(levelId, out onNormal);
+        if (onNormal)
+            flags.GetChild(2).gameObject.SetActive(true);
+
+        data.playedLevelsHard.TryGetValue(levelId, out onHard);
+        if (onHard)
+            flags.GetChild(0).gameObject.SetActive(true);
+    }
+
+    public void SaveData(GameData data)
+    {
+        if (data.playedLevelsAll.ContainsKey(levelId))
+        {
+            data.playedLevelsAll.Remove(levelId);
+        }
+        data.playedLevelsAll.Add(levelId, hasCompleted);
+        if (data.playedLevelsEasy.ContainsKey(levelId))
+        {
+            data.playedLevelsEasy.Remove(levelId);
+        }
+        data.playedLevelsEasy.Add(levelId, onEasy);
+        if (data.playedLevelsNormal.ContainsKey(levelId))
+        {
+            data.playedLevelsNormal.Remove(levelId);
+        }
+        data.playedLevelsNormal.Add(levelId, onNormal);
+        if (data.playedLevelsHard.ContainsKey(levelId))
+        {
+            data.playedLevelsHard.Remove(levelId);
+        }
+        data.playedLevelsHard.Add(levelId, onHard);
     }
 
     private void Update()
@@ -86,6 +135,8 @@ public class LevelBehaviour : MonoBehaviour
             button.gameObject.transform.parent.gameObject.SetActive(true);
             button.GetComponent<ButtonBehaviour>().dropdown.value = PlayerPrefs.GetInt("DefaultDifficulty");
             button.GetComponent<ButtonBehaviour>().play.SetDifficulty(PlayerPrefs.GetInt("DefaultDifficulty"));
+
+            PlayerPrefs.SetInt("CurrentLevel", levelId);
             button.currentLevel = this;
         }
     }

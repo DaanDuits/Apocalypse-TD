@@ -1,14 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class GridController : MonoBehaviour
 {
+    EnemyController ec;
+    Tilemap tilemap;
     public bool displayGridGizmos;
     public LayerMask unwalkableMask;
     public Vector2 gridWorldSize;
     public float nodeRadius;
-    public Vector2 offset;
+    public Vector2Int offset;
 
     Node[,] grid;
 
@@ -17,15 +20,12 @@ public class GridController : MonoBehaviour
 
     private void Awake()
     {
+        ec = GetComponent<EnemyController>();
+        tilemap = ec.level.gameObject.transform.GetChild(1).GetComponent<Tilemap>();
         nodeDiameter = nodeRadius * 2;
         gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
         gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
 
-        CreateGrid();
-    }
-
-    private void Update()
-    {
         CreateGrid();
     }
 
@@ -47,10 +47,14 @@ public class GridController : MonoBehaviour
             for (int y = 0; y < gridSizeY; y++)
             {
                 Vector2 worldPoint = worldBottomLeft + Vector2.right * (x * nodeDiameter + nodeRadius) + Vector2.up * (y * nodeDiameter + nodeRadius);
-                bool walkable = !Physics2D.OverlapCircle(worldPoint, nodeRadius, unwalkableMask);
+                bool walkable = tilemap.HasTile(tilemap.WorldToCell(worldPoint)) || ec.possibleSpawns.Contains(worldPoint);
 
                 grid[x, y] = new Node(walkable, worldPoint, x, y);
             }
+        }
+        foreach (Node n in grid)
+        {
+            grid[n.gridX, n.gridY].neighbours = GetNeighbours(grid[n.gridX, n.gridY]);
         }
     }
 
@@ -68,9 +72,22 @@ public class GridController : MonoBehaviour
                 int checkX = node.gridX + x;
                 int checkY = node.gridY + y;
 
-                if (checkX >= 0 && checkX < gridSizeX && checkY >= 0 && checkY < gridSizeY)
+                if (checkX >= 0 && checkX < gridSizeX && checkY >= 0 && checkY < gridSizeY && grid[checkX, checkY].walkable)
                 {
-                    neighbours.Add(grid[checkX, checkY]);
+                    if (grid[checkX, checkY].worldPos == ec.level.firstTile && ec.level.firstTileDir == new Vector2Int(x,y))
+                    {
+                        neighbours.Add(grid[checkX, checkY]);
+                        continue;
+                    }
+                    if (grid[checkX, checkY].worldPos == ec.level.entrance && ec.level.entranceDir == new Vector2Int(x, y))
+                    {
+                        neighbours.Add(grid[checkX, checkY]);
+                        continue;
+                    }
+                    if ((tilemap.HasTile(tilemap.WorldToCell(grid[checkX, checkY].worldPos)) && tilemap.HasTile(tilemap.WorldToCell(node.worldPos))) || (ec.possibleSpawns.Contains(node.worldPos) && ec.possibleSpawns.Contains(grid[checkX, checkY].worldPos)))
+                    {
+                        neighbours.Add(grid[checkX, checkY]);
+                    }
                 }
             }
         }
@@ -78,16 +95,40 @@ public class GridController : MonoBehaviour
         return neighbours;
     }
 
-    public Node NodeFromWorldPoint(Vector2 worldPosition)
+    public Node NodeFromWorldPoint(Vector2 worldPosition, bool target)
     {
-        float percentX = (worldPosition.x + gridWorldSize.x / 2) / gridWorldSize.x;
-        float percentY = (worldPosition.y + gridWorldSize.y / 2) / gridWorldSize.y;
+        System.Random prng = new System.Random();
+        if (target)
+        {
+            int posX = prng.Next(0, 2);
+            int posY = prng.Next(0, 2);
+            switch (posX, posY)
+            {
+                case (0, 1):
+                    worldPosition.x -= 0.5f;
+                    worldPosition.y += 0.5f;
+                    break;
+                case (1, 1):
+                    worldPosition.x += 0.5f;
+                    worldPosition.y += 0.5f;
+                    break;
+                case (0, 0):
+                    worldPosition.x -= 0.5f;
+                    worldPosition.y -= 0.5f;
+                    break;
+                case (1, 0):
+                    worldPosition.x += 0.5f;
+                    worldPosition.y -= 0.5f;
+                    break;
+            }
+        }
+        float percentX = ((worldPosition.x) + gridWorldSize.x / 2) / gridWorldSize.x;
+        float percentY = ((worldPosition.y) + gridWorldSize.y / 2) / gridWorldSize.y;
         percentX = Mathf.Clamp01(percentX);
         percentY = Mathf.Clamp01(percentY);
 
         int x = Mathf.RoundToInt((gridSizeX - 1) * percentX);
         int y = Mathf.RoundToInt((gridSizeY - 1) * percentY);
-
         return grid[x, y];
      }
 
@@ -100,7 +141,7 @@ public class GridController : MonoBehaviour
             foreach (Node n in grid)
             {
                 Gizmos.color = n.walkable ? Color.white : Color.red;
-                Gizmos.DrawCube(n.worldPos, Vector3.one * nodeDiameter);
+                Gizmos.DrawCube(n.worldPos, Vector3.one * (nodeDiameter - 0.1f));
             }
         }
     }

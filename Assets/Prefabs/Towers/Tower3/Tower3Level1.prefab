@@ -103,6 +103,7 @@ MonoBehaviour:
   upgradeAmount: 3
   Level: 1
   Upgrade: {fileID: 943833289863639444, guid: 4ea55e497b4894740becda132af00ce8, type: 3}
+  shooterUpgrade: {fileID: 5726659423690994472, guid: 09a0743c0125daf4785690cf3df30c18, type: 3}
   nextCost: 75
 --- !u!58 &7924819074579512000
 CircleCollider2D:
@@ -132,4 +133,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33b37930a8152ca4695e608d4e89a857, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  slider: {fileID: 0}
   hp: 100

@@ -117,7 +117,7 @@ Rigidbody2D:
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
-  m_AngularDrag: 5
+  m_AngularDrag: 2
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 0
@@ -146,3 +146,8 @@ MonoBehaviour:
   price: 25
   sliderPrefab: {fileID: 157438869582992476, guid: 7a2c6560949630046b7a995a5c7c7f90, type: 3}
   effectSpeed: 5
+  tags:
+  - Wall
+  - Base
+  - Tower
+  damageCooldown: 1

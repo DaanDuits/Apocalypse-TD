@@ -103,6 +103,7 @@ MonoBehaviour:
   upgradeAmount: 3
   Level: 2
   Upgrade: {fileID: 943833289863639444, guid: 2b3d34a3bc37b88459cd0a05e365be20, type: 3}
+  shooterUpgrade: {fileID: 5726659423690994472, guid: c06a4969cd33a774c9e72e3f1278b150, type: 3}
   nextCost: 100
 --- !u!60 &1484532864588464929
 PolygonCollider2D:
@@ -150,4 +151,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33b37930a8152ca4695e608d4e89a857, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  slider: {fileID: 0}
   hp: 100
