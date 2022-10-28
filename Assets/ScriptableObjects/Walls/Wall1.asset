@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Wall1
   m_EditorClassIdentifier: 
   Name: Wall1
-  price: 10
+  price: 5
   WallPrefab: {fileID: 6049462062507422759, guid: deb67aaaf1ee50c4b836b18971cd3ef5, type: 3}

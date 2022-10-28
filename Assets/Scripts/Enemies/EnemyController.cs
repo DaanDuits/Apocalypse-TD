@@ -10,7 +10,6 @@ public class EnemyController : MonoBehaviour
     public int numUnitsPerSpawn;
     public Sprite[] textures;
     public List<Vector2> possibleSpawns;
-    public Transform spawnArea;
     public float spawnSpeed;
     float spawnOffset;
     float time;
@@ -21,23 +20,32 @@ public class EnemyController : MonoBehaviour
     int wave = -1;
     StartLevel startLevel;
 
+    public Transform grid;
+    public GameObject[] maps;
+
     GameObject button;
     public TMP_Text text;
 
     private void Awake()
     {
-
         Camera.main.GetComponent<PostProcessVolume>().profile.GetSetting<Vignette>().intensity.Override(0f);
         button = GameObject.Find("StartWaveB");
         startLevel = FindObjectOfType<StartLevel>();
-        level = GameObject.Find("Level").GetComponent<Level>();
+
+        GameObject map = Instantiate(maps[PlayerPrefs.GetInt("MapIndex")], grid);
+        map.name = "Level";
+        level = map.GetComponent<Level>();
         time = spawnSpeed + Random.Range(0, 0.3f);
-        spawnArea = GameObject.Find("SpawnArea").transform;
-        for (float x = spawnArea.position.x - (spawnArea.localScale.x / 2) + .5f; x <= spawnArea.position.x + (spawnArea.localScale.x / 2) - .5f; x++)
+        GameObject[] spawnAreas = GameObject.FindGameObjectsWithTag("SpawnArea");
+        for (int i = 0; i < spawnAreas.Length; i++)
         {
-            for (float y = spawnArea.position.y - (spawnArea.localScale.y / 2) + .5f; y <= spawnArea.position.y + (spawnArea.localScale.y / 2) - .5f; y++)
+            Transform spawnArea = spawnAreas[i].transform;
+            for (float x = spawnArea.position.x - (spawnArea.localScale.x / 2) + .5f; x <= spawnArea.position.x + (spawnArea.localScale.x / 2) - .5f; x++)
             {
-                possibleSpawns.Add(new Vector2(x, y));
+                for (float y = spawnArea.position.y - (spawnArea.localScale.y / 2) + .5f; y <= spawnArea.position.y + (spawnArea.localScale.y / 2) - .5f; y++)
+                {
+                    possibleSpawns.Add(new Vector2(x, y));
+                }
             }
         }
         switch (PlayerPrefs.GetInt("Difficulty"))
@@ -57,13 +65,13 @@ public class EnemyController : MonoBehaviour
         }
     }
 
+    public GameObject walls;
     public void StartWave()
     {
-       
             spawn = true;
             wave++;
             button.SetActive(false);
-
+            walls.SetActive(false);
             text.text = "Wave: " + (wave + 1).ToString() + "/" + startLevel.waves.Count.ToString();
     }
 
@@ -90,9 +98,10 @@ public class EnemyController : MonoBehaviour
 
         if (unitsInGame.Count == 0 && !spawn && wave < startLevel.waves.Count - 1 && wave != -1 && !button.activeSelf)
         {
+            walls.SetActive(true);
             button.SetActive(true);
         }
-        else if (unitsInGame.Count == 0 && !spawn &&  wave == startLevel.waves.Count - 1)
+        else if (unitsInGame.Count == 0 && !spawn &&  wave == startLevel.waves.Count - 1 && GameObject.Find("GameUI") != null)
         {
             Camera.main.GetComponent<PostProcessVolume>().profile.GetSetting<Vignette>().intensity.Override(0.45f);
             GameObject.Find("GameUI").SetActive(false);
@@ -102,6 +111,10 @@ public class EnemyController : MonoBehaviour
         }
     }
 
+    private void OnDestroy()
+    {
+        unitsInGame.Clear();
+    }
 
     private void SpawnUnit(GameObject unit)
     {

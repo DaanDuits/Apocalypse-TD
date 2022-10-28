@@ -10,23 +10,25 @@ public class StartLevel : MonoBehaviour
 
     private void Awake()
     {
+        System.Random rng = new System.Random();
+        int waveA = rng.Next(7, 13);
         GameObject.Find("GameUI").SetActive(true);
         switch (PlayerPrefs.GetInt("Difficulty"))
         {
             case 0:
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < waveA; i++)
                 {
                     CreateWave(enemies, 0);
                 }
                 break;
             case 1:
-                for (int i = 0; i < 8; i++)
+                for (int i = 0; i < waveA; i++)
                 {
                     CreateWave(enemies, 1);
                 }
                 break;
             case 2:
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < waveA; i++)
                 {
                     CreateWave(enemies, 2);
                 }

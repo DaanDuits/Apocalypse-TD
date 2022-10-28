@@ -8,7 +8,7 @@ public class LevelBehaviour : MonoBehaviour, IDataPersistance
     public float scaleSpeed;
 
     bool hasCompleted, onEasy, onHard, onNormal;
-    int levelId;
+    int levelId, mapId;
 
     Vector3 ogScale, toScale;
 
@@ -16,6 +16,8 @@ public class LevelBehaviour : MonoBehaviour, IDataPersistance
 
     ButtonBehaviour button;
     CameraBehaviour cam;
+
+    public static LevelBehaviour instance;
 
     private void Awake()
     {
@@ -26,6 +28,10 @@ public class LevelBehaviour : MonoBehaviour, IDataPersistance
         }
         canClick = true;
         button = GameObject.Find("Image").GetComponent<ButtonBehaviour>();
+
+        int seedHash = PlayerPrefs.GetString("Seed").GetHashCode();
+        System.Random prng = new System.Random(seedHash + levelId);
+        mapId = prng.Next(0, 4);
     }
 
     private void Start()
@@ -37,6 +43,7 @@ public class LevelBehaviour : MonoBehaviour, IDataPersistance
     }
     public void LoadData(GameData data)
     {
+        data.playedLevelsAll.TryGetValue(levelId, out hasCompleted);
         data.playedLevelsEasy.TryGetValue(levelId, out onEasy);
         if (onEasy)
             flags.GetChild(1).gameObject.SetActive(true);
@@ -135,14 +142,17 @@ public class LevelBehaviour : MonoBehaviour, IDataPersistance
             button.gameObject.transform.parent.gameObject.SetActive(true);
             button.GetComponent<ButtonBehaviour>().dropdown.value = PlayerPrefs.GetInt("DefaultDifficulty");
             button.GetComponent<ButtonBehaviour>().play.SetDifficulty(PlayerPrefs.GetInt("DefaultDifficulty"));
-
+            instance = this;
             PlayerPrefs.SetInt("CurrentLevel", levelId);
+            Debug.Log(mapId);
+            PlayerPrefs.SetInt("MapIndex", mapId);
             button.currentLevel = this;
         }
     }
 
     public void onExit()
     {
+        instance = null;
         toScale = ogScale;
         cam.toCamScale = 5;
         cam.toPos = new Vector3(0, 0, -10);

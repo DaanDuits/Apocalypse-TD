@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
@@ -58,6 +59,10 @@ public class BasePlacing : MonoBehaviour
     {
         x += 0.5f;
         y += 0.5f;
+        if (BuildWall.instance.noBuildArea.Any(p => p == new Vector2(x, y) || p == new Vector2(x - 1, y) || p == new Vector2(x - 1, y - 1) || p == new Vector2(x, y - 1)))
+        {
+            return false;
+        }
         if (map.HasTile(map.WorldToCell(new Vector2(x, y))) && map.HasTile(map.WorldToCell(new Vector2(x - 1, y))) && map.HasTile(map.WorldToCell(new Vector2(x, y - 1))) && map.HasTile(map.WorldToCell(new Vector2(x - 1, y - 1))))
         {
             return true;

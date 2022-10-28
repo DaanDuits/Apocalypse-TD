@@ -44,7 +44,7 @@ public class Upgrade : MonoBehaviour
                 rC = Instantiate(rangeCircle);
                 rC.transform.position = data.transform.position;
                 TowerBehaviour tB = data.transform.GetChild(0).gameObject.GetComponent<TowerBehaviour>();
-                if (tB.range >= 5f)
+                if (tB.range >= 8f)
                     rC.transform.localScale = new Vector2(2, 2);
                 else
                     rC.transform.localScale = new Vector2(tB.range * 2, tB.range * 2);
@@ -83,7 +83,16 @@ public class Upgrade : MonoBehaviour
 
     public void ExitMenu()
     {
+        shopPanel.SetActive(true);
+        upgradePanel.SetActive(false);
         Destroy(GameObject.Find("Range(Clone)"));
+    }
+
+    public void SellCurrent()
+    {
+        shop.counter.Addresources(currentData.SellCost); 
+        Destroy(currentData.gameObject);
+        ExitMenu();
     }
 
     public void UpgradeCurrent()

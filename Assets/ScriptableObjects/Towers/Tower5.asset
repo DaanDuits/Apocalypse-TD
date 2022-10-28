@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c61e7af7d8dab954d91d8d8f46cdcc7f, type: 3}
+  m_Name: Tower5
+  m_EditorClassIdentifier: 
+  Name: 
+  price: 45
+  TowerPrefab: {fileID: 4993333576903790461, guid: dd7ae757d45393e4f81b92a3c2eba7bb, type: 3}
+  overlayPrefab: {fileID: 2198619111498740741, guid: 9a101c2c04950f8458cdd45d2daecfce, type: 3}
+  shooterPrefab: {fileID: 5726659423690994472, guid: 9945a54bad4848d4ba9588748da5d4f6, type: 3}

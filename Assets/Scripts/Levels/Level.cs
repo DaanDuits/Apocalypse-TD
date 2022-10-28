@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Level : MonoBehaviour
 {
-    public Vector2 entrance;
-    public Vector2Int entranceDir;
-    public Vector2 firstTile; 
-    public Vector2Int firstTileDir;
+    public List<Vector2> entrance;
+    public List<Vector2Int> entranceDir;
+    public List<Vector2> firstTile; 
+    public List<Vector2Int> firstTileDir;
 }

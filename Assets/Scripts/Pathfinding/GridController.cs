@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -74,12 +75,12 @@ public class GridController : MonoBehaviour
 
                 if (checkX >= 0 && checkX < gridSizeX && checkY >= 0 && checkY < gridSizeY && grid[checkX, checkY].walkable)
                 {
-                    if (grid[checkX, checkY].worldPos == ec.level.firstTile && ec.level.firstTileDir == new Vector2Int(x,y))
+                    if (ec.level.firstTile.Any(p => p == grid[checkX, checkY].worldPos) && ec.level.firstTileDir.Any(p => p == new Vector2Int(x,y)))
                     {
                         neighbours.Add(grid[checkX, checkY]);
                         continue;
                     }
-                    if (grid[checkX, checkY].worldPos == ec.level.entrance && ec.level.entranceDir == new Vector2Int(x, y))
+                    if (ec.level.entrance.Any(p => p == grid[checkX, checkY].worldPos) && ec.level.entranceDir.Any(p => p == new Vector2Int(x, y)))
                     {
                         neighbours.Add(grid[checkX, checkY]);
                         continue;

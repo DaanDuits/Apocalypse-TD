@@ -15,6 +15,7 @@ public class UpgradePanelData : MonoBehaviour
 
     Upgrade panel;
     public bool isWall;
+    public int SellCost;
 
     private void Start()
     {

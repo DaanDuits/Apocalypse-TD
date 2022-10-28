@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Unit : MonoBehaviour
 {
+    public Transform mainTarget;
     public Transform target;
     public float speed = 20;
     Vector2[] path;
@@ -21,20 +23,56 @@ public class Unit : MonoBehaviour
     GameObject sliderObj;
     Slider slider;
 
+    //int changeToAgro;
     float takenDamage;
     public float effectSpeed;
 
-    public List<string> tags;    
+    public List<string> tags;
+    int changeToDistract;
+
+    private void Awake()
+    {
+        switch (PlayerPrefs.GetInt("Difficulty"))
+        {
+            case 0:
+                hp = 75;
+                damage = 10;
+                price = 20;
+                changeToDistract = 5;
+                //changeToAgro = 100;
+                break;
+            case 1:
+                hp = 100;
+                damage = 25;
+                price = 15;
+                changeToDistract = 10;
+                //changeToAgro = 60;
+                break;
+            case 2:
+                hp = 125;
+                damage = 40;
+                price = 10;
+                changeToDistract = 20;
+                //changeToAgro = 30;
+                break;
+        }
+    }
 
     private void Start()
     {
-        target = GameObject.Find("MainBase(Clone)").transform;
-        PathRequestManager.RequestPath(transform.position, target.position, onPathFound);
+        System.Random rng = new System.Random();
+        GameObject[] targets = GameObject.FindGameObjectsWithTag("Decoy");
+        if (targets.Length != 0)
+            mainTarget = rng.Next(0, changeToDistract) == 1 ? targets[rng.Next(0, targets.Length)].transform : GameObject.Find("MainBase(Clone)").transform;
+        else
+            mainTarget = GameObject.Find("MainBase(Clone)").transform;
+        PathRequestManager.RequestPath(transform.position, mainTarget.position, onPathFound, mainTarget == GameObject.Find("MainBase(Clone)").transform);
         takenDamage = hp;
-        shop = GameObject.FindObjectOfType<TowerShop>();
+        shop = FindObjectOfType<TowerShop>();
         sliderObj = Instantiate(sliderPrefab, GameObject.Find("WorldCanvas").transform);
         slider = sliderObj.GetComponent<Slider>();
         slider.maxValue = hp;
+        slider.value = hp;
     }
 
     // Update is called once per frame
@@ -46,9 +84,13 @@ public class Unit : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        slider.value = Mathf.Lerp(slider.value, takenDamage, Time.deltaTime * effectSpeed);
+        if (slider.value > takenDamage)
+        {
+            slider.value -= 3 * takeDamage * Time.deltaTime;
+        }
     }
 
+    float takeDamage;
     private void OnTriggerEnter2D(Collider2D collision)
     {
         GameObject go = collision.gameObject;
@@ -57,6 +99,8 @@ public class Unit : MonoBehaviour
             BulletBehaviour bb = go.GetComponent<BulletBehaviour>();
 
             takenDamage = slider.value - bb.damage;
+            takeDamage = bb.damage;
+            System.Random rng = new System.Random();
 
             Destroy(go, bb.hitLifeTime);
         }
@@ -74,7 +118,8 @@ public class Unit : MonoBehaviour
             }
         }
         EnemyController ec = FindObjectOfType<EnemyController>();
-        ec.unitsInGame.Remove(gameObject);
+        if (ec != null)
+            ec.unitsInGame.Remove(gameObject);
         shop.counter.Addresources(price);
         Destroy(sliderObj);
     }
@@ -89,13 +134,15 @@ public class Unit : MonoBehaviour
         }
     }
 
+    bool stopFollowingPath;
     IEnumerator FollowPath()
     {
+        stopFollowingPath = false;
         Vector3 currentWayPoint = path[0];
 
-        while (true)
+        while (!stopFollowingPath)
         {
-            if ((currentWayPoint - transform.position).magnitude <= 0.2f)
+            if ((currentWayPoint - transform.position).magnitude <= 0.4f)
             {
                 if (targetIndex <= path.Length)
                 {
@@ -144,7 +191,7 @@ public class Unit : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (tags.Contains(collision.gameObject.tag))
+        if (tags.Contains(collision.gameObject.tag) && !DealDamage)
         {
             DealDamage = true;
             velocity = Vector2.zero;
@@ -162,11 +209,11 @@ public class Unit : MonoBehaviour
     IEnumerator DealDamageOverTime(GameObject obj)
     {
         BuildingBehaviour bb = obj.GetComponent<BuildingBehaviour>();
-        float time = damageCooldown;
+        PlayerHpController ph = FindObjectOfType<PlayerHpController>();
         switch (obj.tag)
         {
             case "Base":
-                StartCoroutine(bb.TakeDamage(damage));
+                StartCoroutine(ph.TakeDamage(damage));
                 break;
             default:
                 bb.hp -= damage;
@@ -174,21 +221,33 @@ public class Unit : MonoBehaviour
         }
         while (DealDamage)
         {
-            if (time <= 0)
+            yield return new WaitForSeconds(damageCooldown); 
+            switch (obj.tag)
             {
-                switch (obj.tag)
-                {
-                    case "Base":
-                        StartCoroutine(bb.TakeDamage(damage));
-                        break;
-                    default:
+                case "Base":
+                    StartCoroutine(ph.TakeDamage(damage));
+                    break;
+                case "Decoy":
+                    if (bb.hp - damage <= 0)
+                    {
                         bb.hp -= damage;
-                        break;
-                }
-                time = damageCooldown;
+                        stopFollowingPath = true;
+                        yield return null;
+                        mainTarget = GameObject.Find("MainBase(Clone)").transform;
+                        PathRequestManager.RequestPath(transform.position, mainTarget.position, onPathFound, mainTarget == GameObject.Find("MainBase(Clone)").transform);
+                        yield break;
+                    }
+                    bb.hp -= damage;
+                    break;
+                default:
+                    if (bb.hp - damage <= 0)
+                    {
+                        bb.hp -= damage;
+                        yield break;
+                    }
+                    bb.hp -= damage;
+                    break;
             }
-            time -= Time.deltaTime;
-            yield return null;
         }
     }
 }

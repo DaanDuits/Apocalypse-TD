@@ -13,22 +13,30 @@ public class PathFinding : MonoBehaviour
         grid = GetComponent<GridController>();
     }
 
-    public void StartFindPath(Vector2 startPos, Vector2 tartgetPos)
+    public void StartFindPath(Vector2 startPos, Vector2 tartgetPos, bool mainBase)
     {
-        StartCoroutine(FindPath(startPos, tartgetPos));
+        StartCoroutine(FindPath(startPos, tartgetPos, mainBase));
     }
 
-    IEnumerator FindPath(Vector2 startPos, Vector2 targetPos)
+    IEnumerator FindPath(Vector2 startPos, Vector2 targetPos, bool mainBase)
     {
         Vector2[] wayPoints = new Vector2[0];
         bool pathSucces = false;
 
         Node startNode = grid.NodeFromWorldPoint(startPos, false);
-        Node targetNode = grid.NodeFromWorldPoint(targetPos, true);
+        Node targetNode;
+        switch (mainBase)
+        {
+            case false:
+                targetNode = grid.NodeFromWorldPoint(targetPos, false);
+                break;
+            case true:
+                targetNode = grid.NodeFromWorldPoint(targetPos, true);
+                break;
+        }
 
         if (startNode.walkable && targetNode.walkable)
         {
-
             Heap<Node> openSet = new Heap<Node>(grid.MaxSize);
             HashSet<Node> closedSet = new HashSet<Node>();
             openSet.Add(startNode);

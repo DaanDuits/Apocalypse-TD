@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 public class EndScreenButtons : MonoBehaviour, IDataPersistance
 {
     int levelId;
-    bool victory;
+    bool victory = false;
 
     private void Start()
     {
@@ -18,13 +18,25 @@ public class EndScreenButtons : MonoBehaviour, IDataPersistance
 
     public void Restart()
     {
+        DataPersistanceManager.instance.SaveGame();
         SceneManager.LoadScene("Level");
     }
 
     public void LevelMap()
     {
+        DataPersistanceManager.instance.SaveGame();
         SceneManager.LoadScene("WorldMap");
     }
+    public void MainMenu()
+    {
+        DataPersistanceManager.instance.SaveGame();
+        SceneManager.LoadScene("MainMenu");
+    }
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
+
     public void LoadData(GameData data)
     {
 
@@ -32,7 +44,8 @@ public class EndScreenButtons : MonoBehaviour, IDataPersistance
 
     public void SaveData(GameData data)
     {
-        if (!data.playedLevelsAll[levelId])
+        data.playedLevelsAll.TryGetValue(levelId, out bool hasPlayed);
+        if (!hasPlayed)
         {
             if (data.playedLevelsAll.ContainsKey(levelId))
             {
@@ -40,7 +53,9 @@ public class EndScreenButtons : MonoBehaviour, IDataPersistance
             }
             data.playedLevelsAll.Add(levelId, victory);
         }
-        if (!data.playedLevelsEasy[levelId])
+
+        data.playedLevelsEasy.TryGetValue(levelId, out bool onEasy);
+        if (!onEasy && victory)
         {
             if (data.playedLevelsEasy.ContainsKey(levelId))
             {
@@ -48,7 +63,9 @@ public class EndScreenButtons : MonoBehaviour, IDataPersistance
             }
             data.playedLevelsEasy.Add(levelId, PlayerPrefs.GetInt("Difficulty") == 0);
         }
-        if (!data.playedLevelsNormal[levelId])
+
+        data.playedLevelsNormal.TryGetValue(levelId, out bool onNormal);
+        if (!onNormal && victory)
         {
             if (data.playedLevelsNormal.ContainsKey(levelId))
             {
@@ -56,7 +73,9 @@ public class EndScreenButtons : MonoBehaviour, IDataPersistance
             }
             data.playedLevelsNormal.Add(levelId, PlayerPrefs.GetInt("Difficulty") == 1);
         }
-        if (!data.playedLevelsHard[levelId])
+
+        data.playedLevelsHard.TryGetValue(levelId, out bool onHard);
+        if (!onHard && victory)
         {
             if (data.playedLevelsHard.ContainsKey(levelId))
             {

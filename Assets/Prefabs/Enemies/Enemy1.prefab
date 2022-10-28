@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 6367960011601504861}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 8.627569, y: 3.4132075, z: 0}
-  m_LocalScale: {x: 0.45, y: 0.45, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -136,11 +136,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58fda39b72c13314dbb0664ac9ed6f01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainTarget: {fileID: 0}
   target: {fileID: 0}
-  speed: 2
+  speed: 2.75
   rotationSpeed: 5
-  rb: {fileID: 0}
   shop: {fileID: 0}
+  velocity: {x: 0, y: 0}
   hp: 100
   damage: 10
   price: 25
@@ -150,4 +151,5 @@ MonoBehaviour:
   - Wall
   - Base
   - Tower
-  damageCooldown: 1
+  - Decoy
+  damageCooldown: 2.5

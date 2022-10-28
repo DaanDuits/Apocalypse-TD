@@ -12,10 +12,14 @@ public class TowerBehaviour : MonoBehaviour
     public float range;
     float timer;
     public int bulletAmount;
+    public AudioSource audioSrc;
+    public AudioClip clip;
+
 
     // Update is called once per frame
     private void Start()
-    {   
+    {
+        audioSrc = FindObjectOfType<AudioSource>();
         timer = fireRate;
     }
     void Update()
@@ -38,6 +42,7 @@ public class TowerBehaviour : MonoBehaviour
                     {
                         float rnd = Random.Range(-fireSpread, fireSpread) / 100;
                         bB.Setup(fullResult + new Vector2(rnd, rnd), transform.parent);
+                        audioSrc.PlayOneShot(clip);
                         Destroy(pro, bB.airTime);
                         if (i == bulletAmount - 1)
                             timer = fireRate;

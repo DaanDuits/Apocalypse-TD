@@ -17,7 +17,7 @@ public class BuildTower : MonoBehaviour
     bool CanPlace(GameObject tower, Vector2 gridPos)
     {
         GameObject[] objects = GameObject.FindObjectsOfType<GameObject>();
-        if (!tileMap.HasTile(tileMap.WorldToCell(gridPos)))
+        if (!tileMap.HasTile(tileMap.WorldToCell(gridPos)) || BuildWall.instance.noBuildArea.Any(p => p == gridPos))
             return false;
         foreach (GameObject o in objects)
         {
@@ -63,9 +63,12 @@ public class BuildTower : MonoBehaviour
                 if (Input.GetMouseButtonDown(0))
                 {
                     shop.counter.Removeresources(tower.price);
-                    GameObject shooter = Instantiate(tower.shooterPrefab, towerObject.transform);
                     towerObject.transform.position = new Vector3(Mathf.Floor(mousePos.x) + 0.5f, Mathf.Floor(mousePos.y) + 0.5f);
-                    shooter.transform.position = towerObject.transform.position;
+                    if (tower.shooterPrefab != null)
+                    {
+                        GameObject shooter = Instantiate(tower.shooterPrefab, towerObject.transform);
+                        shooter.transform.position = towerObject.transform.position;
+                    }
                     Destroy(overlay);
                     shop.canBuild = true;
                     if (collider != null)
