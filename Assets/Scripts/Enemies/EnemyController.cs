@@ -25,6 +25,7 @@ public class EnemyController : MonoBehaviour
 
     GameObject button;
     public TMP_Text text;
+    public TMP_Text units;
 
     private void Awake()
     {
@@ -77,7 +78,14 @@ public class EnemyController : MonoBehaviour
 
     void Update()
     {
-
+        if (unitsInGame.Count != 0)
+        {
+            if (!units.gameObject.activeSelf)
+            {
+                units.gameObject.SetActive(true);
+            }
+            units.text = "Enemies: " + unitsInGame.Count.ToString();
+        }
         //Spawn enemies over random time when spawn true
         if (time <= 0 && i < startLevel.waves[wave].enemies.Count && spawn)
         {
@@ -100,6 +108,7 @@ public class EnemyController : MonoBehaviour
         {
             walls.SetActive(true);
             button.SetActive(true);
+            units.gameObject.SetActive(false);
         }
         else if (unitsInGame.Count == 0 && !spawn &&  wave == startLevel.waves.Count - 1 && GameObject.Find("GameUI") != null)
         {

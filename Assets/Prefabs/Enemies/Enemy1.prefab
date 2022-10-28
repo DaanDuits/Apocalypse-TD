@@ -152,4 +152,6 @@ MonoBehaviour:
   - Base
   - Tower
   - Decoy
+  red: {r: 1, g: 0, b: 0, a: 1}
+  normal: {r: 1, g: 1, b: 1, a: 1}
   damageCooldown: 2.5

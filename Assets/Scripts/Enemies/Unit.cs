@@ -103,8 +103,45 @@ public class Unit : MonoBehaviour
             System.Random rng = new System.Random();
 
             Destroy(go, bb.hitLifeTime);
+            StartCoroutine(changeColors());
         }
     }
+
+    public Color red, normal;
+    IEnumerator changeColors()
+    {
+        bool toRed = true;
+        while (true)
+        {
+            if (toRed)
+            {
+                Debug.Log("Here");
+                if ((GetComponent<SpriteRenderer>().color + red * Time.deltaTime).r >= red.r)
+                {
+                    GetComponent<SpriteRenderer>().color = red;
+                    toRed = false;
+                }
+                else
+                {
+                    GetComponent<SpriteRenderer>().color += red  * Time.deltaTime;
+                }
+            }
+            else
+            {
+                if ((GetComponent<SpriteRenderer>().color - red * Time.deltaTime).r <= normal.r)
+                {
+                    GetComponent<SpriteRenderer>().color = normal;
+                    break;
+                }
+                else
+                {
+                    GetComponent<SpriteRenderer>().color -= red * Time.deltaTime;
+                }
+            }
+            yield return null;
+        }
+    }
+
     private void OnDestroy()
     {
         GameObject[] allObjects = GameObject.FindObjectsOfType<GameObject>();
