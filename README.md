@@ -12,7 +12,7 @@
 ## Technisch
 Ik had de meeste tijd besteed aan de zombie pathfinding wat door veel verschillende versies is gegaan.
 
-De eerste versie was zonder hulp van een turorial een gridbased pathfinding te maken maar er wareb nogal wat bugs met het detecten van boundaries waardoor het niet performant was.
+De eerste versie was zonder hulp van een turorial een gridbased pathfinding te maken maar er waren nogal wat bugs met het detecten van boundaries waardoor het niet performant was.
 
 De tweede versie was deze tutorial: https://www.youtube.com/watch?v=tSe6ZqDKB0Y&list=PLSft82iKx-nX2G7CwuDwbiH2sagiDFXJH&index=7&t=1156s. Nadat ik de tutorial meerdere keren heb gevolgd wist ik nog steeds niet hoe flowmaps precies werken en dus kon ik er ook vrij weinig aan veranderen zodat het voor deze tower defense werkte.
 
