@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
 using TMPro;
+using TowerDefense.Utilities;
 
 public class EnemyController : MonoBehaviour
 {
@@ -16,7 +17,6 @@ public class EnemyController : MonoBehaviour
     int i = 0;
     bool spawn;
 
-    public List<GameObject> unitsInGame;
     int wave = -1;
     StartLevel startLevel;
 
@@ -78,13 +78,13 @@ public class EnemyController : MonoBehaviour
 
     void Update()
     {
-        if (unitsInGame.Count != 0)
+        if (Registry<Unit>.Items.Count != 0)
         {
             if (!units.gameObject.activeSelf)
             {
                 units.gameObject.SetActive(true);
             }
-            units.text = "Enemies: " + unitsInGame.Count.ToString();
+            units.text = "Enemies: " + Registry<Unit>.Items.Count.ToString();
         }
         //Spawn enemies over random time when spawn true
         if (time <= 0 && i < startLevel.waves[wave].enemies.Count && spawn)
@@ -104,13 +104,13 @@ public class EnemyController : MonoBehaviour
             time -= Time.deltaTime;
         }
 
-        if (unitsInGame.Count == 0 && !spawn && wave < startLevel.waves.Count - 1 && wave != -1 && !button.activeSelf)
+        if (Registry<Unit>.Items.Count == 0 && !spawn && wave < startLevel.waves.Count - 1 && wave != -1 && !button.activeSelf)
         {
             walls.SetActive(true);
             button.SetActive(true);
             units.gameObject.SetActive(false);
         }
-        else if (unitsInGame.Count == 0 && !spawn &&  wave == startLevel.waves.Count - 1 && GameObject.Find("GameUI") != null)
+        else if (Registry<Unit>.Items.Count == 0 && !spawn &&  wave == startLevel.waves.Count - 1 && GameObject.Find("GameUI") != null)
         {
             Camera.main.GetComponent<PostProcessVolume>().profile.GetSetting<Vignette>().intensity.Override(0.45f);
             GameObject.Find("GameUI").SetActive(false);
@@ -118,11 +118,6 @@ public class EnemyController : MonoBehaviour
             ui.transform.GetChild(0).GetChild(0).GetComponent<TMP_Text>().text = "Victory!";
             ui.transform.GetChild(0).gameObject.SetActive(true);
         }
-    }
-
-    private void OnDestroy()
-    {
-        unitsInGame.Clear();
     }
 
     private void SpawnUnit(GameObject unit)
@@ -135,7 +130,5 @@ public class EnemyController : MonoBehaviour
 
         Vector2 spawnPoint = possibleSpawns[Random.Range(0, possibleSpawns.Count)];
         newUnit.transform.position = spawnPoint;
-
-        unitsInGame.Add(newUnit);
     }
 }

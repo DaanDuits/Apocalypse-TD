@@ -1,12 +1,12 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TowerDefense.Utilities;
+using System.Linq;
 
 public class TowerBehaviour : MonoBehaviour
 {
     public GameObject bulletPrefab;
     public Transform barrel;
-    public List<Transform> enemies = new List<Transform>();
     
     public float fireRate = 2f, rotationOffset, rotationSpeed, fireSpread;
     public float range;
@@ -14,6 +14,7 @@ public class TowerBehaviour : MonoBehaviour
     public int bulletAmount;
     public AudioSource audioSrc;
     public AudioClip clip;
+    private List<Unit> _enemies = new List<Unit>();
 
 
     // Update is called once per frame
@@ -32,9 +33,9 @@ public class TowerBehaviour : MonoBehaviour
                 GameObject pro = Instantiate(bulletPrefab);
                 pro.transform.position = barrel.position;
                 BulletBehaviour bB = pro.GetComponent<BulletBehaviour>();
-                Unit eB = GetClosestEnemy().gameObject.GetComponent<Unit>();
+                Unit eB = GetClosestEnemy();
 
-                if (InterceptionDirection(GetClosestEnemy().position, barrel.position, eB.velocity, bB.speed, out Vector2 result, out Vector2 fullResult))
+                if (InterceptionDirection(GetClosestEnemy().transform.position, barrel.position, eB.velocity, bB.speed, out Vector2 result, out Vector2 fullResult))
                 {
                     float angle = Mathf.Atan2(result.y, result.x) * Mathf.Rad2Deg - 90f + rotationOffset;
                     transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.AngleAxis(angle, transform.forward), Time.deltaTime * rotationSpeed);
@@ -62,35 +63,17 @@ public class TowerBehaviour : MonoBehaviour
 
     void UpdateEnemies()
     {
-        if (enemies.Count > 0)
-        {
-            for (int i = 0; i < enemies.Count; i++)
-            {
-                if (Vector2.Distance(enemies[i].position, transform.position) > range)
-                {
-                    enemies.RemoveAt(i);
-                }
-            }
-        }
-
-        GameObject[] objects = GameObject.FindObjectsOfType<GameObject>();
-        foreach (GameObject c in objects)
-        {
-            if (c.tag == "Enemy" && Vector2.Distance(transform.position, c.transform.position) <= range && !enemies.Contains(c.transform))
-            {
-                enemies.Add(c.transform);
-            }
-        }
+        _enemies = Registry<Unit>.Filter(u => Vector2.Distance(transform.position, u.transform.position) <= range).ToList();
     }
 
-    Transform GetClosestEnemy()
+    Unit GetClosestEnemy()
     {
-        Transform tMin = null;
+        Unit tMin = null;
         float minDist = Mathf.Infinity;
         Vector3 currentPos = transform.position;
-        foreach (Transform t in enemies)
+        foreach (Unit t in _enemies)
         {
-            float dist = Vector3.Distance(t.position, currentPos);
+            float dist = Vector3.Distance(t.transform.position, currentPos);
             if (dist < minDist)
             {
                 tMin = t;

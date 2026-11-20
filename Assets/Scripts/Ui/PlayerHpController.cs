@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Rendering.PostProcessing;
 using TMPro;
+using TowerDefense.Utilities;
+using System.Linq;
 
 public class PlayerHpController : MonoBehaviour
 {
@@ -36,15 +38,16 @@ public class PlayerHpController : MonoBehaviour
     }
     public IEnumerator TakeDamage(float damage)
     {
+        Debug.Log("Damage");
         float newHp = playerHp - damage;
         takeDamage = true;
         if (playerHp < .1f && GameObject.Find("GameUI").activeSelf)
         {
             Camera.main.GetComponent<PostProcessVolume>().profile.GetSetting<Vignette>().intensity.Override(0.45f);
-            EnemyController ec = FindObjectOfType<EnemyController>();
-            for (int i = 0; i < ec.unitsInGame.Count; i++)
+            List<Unit> activeUnits = Registry<Unit>.Filter(u => u != null).ToList();
+            foreach (Unit u in activeUnits)
             {
-                Destroy(ec.unitsInGame[i]);
+                Destroy(u.gameObject);
             }
 
             GameObject.Find("GameUI").SetActive(false);

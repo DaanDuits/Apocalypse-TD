@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using TowerDefense.Utilities;
 
 public class Unit : MonoBehaviour
 {
@@ -75,6 +75,16 @@ public class Unit : MonoBehaviour
         slider.value = hp;
     }
 
+    private void OnEnable()
+    {
+        Registry<Unit>.Register(this);
+    }
+
+    private void OnDisable()
+    {
+        Registry<Unit>.Unregister(this);
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -144,19 +154,6 @@ public class Unit : MonoBehaviour
 
     private void OnDestroy()
     {
-        GameObject[] allObjects = GameObject.FindObjectsOfType<GameObject>();
-        foreach (GameObject o in allObjects)
-        {
-            if (o.tag == "Shooter")
-            {
-                TowerBehaviour tB = o.GetComponent<TowerBehaviour>();
-                if (tB != null && tB.enemies.Contains(transform))
-                    tB.enemies.Remove(transform);
-            }
-        }
-        EnemyController ec = FindObjectOfType<EnemyController>();
-        if (ec != null)
-            ec.unitsInGame.Remove(gameObject);
         shop.counter.Addresources(price);
         Destroy(sliderObj);
     }
