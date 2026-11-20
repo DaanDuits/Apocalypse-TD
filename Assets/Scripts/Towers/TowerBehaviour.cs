@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
-using TowerDefense.Utilities;
+using TowerDefense.Utility;
 using System.Linq;
+using TowerDefense.Health;
+using UnityEngine.Rendering;
 
 public class TowerBehaviour : MonoBehaviour
 {
@@ -14,6 +16,7 @@ public class TowerBehaviour : MonoBehaviour
     public int bulletAmount;
     public AudioSource audioSrc;
     public AudioClip clip;
+
     private List<Unit> _enemies = new List<Unit>();
 
 
@@ -61,7 +64,7 @@ public class TowerBehaviour : MonoBehaviour
         timer -= Time.deltaTime;
     }
 
-    void UpdateEnemies()
+    private void UpdateEnemies()
     {
         _enemies = Registry<Unit>.Filter(u => Vector2.Distance(transform.position, u.transform.position) <= range).ToList();
     }
@@ -90,7 +93,7 @@ public class TowerBehaviour : MonoBehaviour
         float alpha = Vector2.Angle(aToB, vA) * Mathf.Deg2Rad;
         float sA = vA.magnitude;
         float r = sA / sB;
-        if (Meth.SolveQuadratic(1 - r* r, 2 * r * dC * Mathf.Cos(alpha), -(dC * dC), out float root1, out float root2) == 0)
+        if (Math.SolveQuadratic(1 - r* r, 2 * r * dC * Mathf.Cos(alpha), -(dC * dC), out float root1, out float root2) == 0)
         {
             result = Vector2.zero;
 
@@ -103,22 +106,5 @@ public class TowerBehaviour : MonoBehaviour
         result = (c - b).normalized;
         fullResult = c - b;
         return true;
-    }
-}
-
-public class Meth
-{
-    public static int SolveQuadratic(float a, float b, float c, out float root1, out float root2)
-    {
-        float discriminant = b * b - 4 * a * c;
-        if (discriminant < 0)
-        {
-            root1 = Mathf.Infinity;
-            root2 = -root1;
-            return 0;
-        }
-        root1 = (-b + Mathf.Sqrt(discriminant)) / (2 * a);
-        root2 = (-b - Mathf.Sqrt(discriminant)) / (2 * a);
-        return discriminant > 0 ? 2 : 1;
     }
 }

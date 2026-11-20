@@ -2,7 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using TowerDefense.Utilities;
+using TowerDefense.Utility;
+using TowerDefense.Health;
+using System.Linq;
 
 public class Unit : MonoBehaviour
 {
@@ -17,8 +19,8 @@ public class Unit : MonoBehaviour
 
     public Vector2 velocity;
 
-    public float hp, damage;
-    public int price;
+    [SerializeField] private float hp, damage;
+    [SerializeField] private int reward;
     public GameObject sliderPrefab;
     GameObject sliderObj;
     Slider slider;
@@ -30,6 +32,10 @@ public class Unit : MonoBehaviour
     public List<string> tags;
     int changeToDistract;
 
+    private bool _dealDamage;
+
+    public float damageCooldown;
+
     private void Awake()
     {
         switch (PlayerPrefs.GetInt("Difficulty"))
@@ -37,21 +43,21 @@ public class Unit : MonoBehaviour
             case 0:
                 hp = 75;
                 damage = 10;
-                price = 20;
+                reward = 20;
                 changeToDistract = 5;
                 //changeToAgro = 100;
                 break;
             case 1:
                 hp = 100;
                 damage = 25;
-                price = 15;
+                reward = 15;
                 changeToDistract = 10;
                 //changeToAgro = 60;
                 break;
             case 2:
                 hp = 125;
                 damage = 40;
-                price = 10;
+                reward = 10;
                 changeToDistract = 20;
                 //changeToAgro = 30;
                 break;
@@ -125,7 +131,6 @@ public class Unit : MonoBehaviour
         {
             if (toRed)
             {
-                Debug.Log("Here");
                 if ((GetComponent<SpriteRenderer>().color + red * Time.deltaTime).r >= red.r)
                 {
                     GetComponent<SpriteRenderer>().color = red;
@@ -154,7 +159,7 @@ public class Unit : MonoBehaviour
 
     private void OnDestroy()
     {
-        shop.counter.Addresources(price);
+        shop.counter.Addresources(reward);
         Destroy(sliderObj);
     }
 
@@ -219,69 +224,22 @@ public class Unit : MonoBehaviour
         }
     }
 
-    bool DealDamage;
-
-    public float damageCooldown;
-
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (tags.Contains(collision.gameObject.tag) && !DealDamage)
-        {
-            DealDamage = true;
-            velocity = Vector2.zero;
-            StartCoroutine(DealDamageOverTime(collision.gameObject));
-        }
-    }
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        if (tags.Contains(collision.gameObject.tag))
-        {
-            DealDamage = false;
-        }
+        if (_dealDamage)
+            return;
+
+        _dealDamage = true;
+        velocity = Vector2.zero;
+        IDamageable other = Registry<IDamageable>.Filter(d => d == collision.gameObject.GetComponent<IDamageable>()).First();
+        DealDamage(other);
     }
 
-    IEnumerator DealDamageOverTime(GameObject obj)
+    private IEnumerator DealDamage(IDamageable other)
     {
-        BuildingBehaviour bb = obj.GetComponent<BuildingBehaviour>();
-        PlayerHpController ph = FindObjectOfType<PlayerHpController>();
-        switch (obj.tag)
-        {
-            case "Base":
-                ph.TakeDamage(damage);
-                break;
-            default:
-                bb.hp -= damage;
-                break;
-        }
-        while (DealDamage)
-        {
-            yield return new WaitForSeconds(damageCooldown); 
-            switch (obj.tag)
-            {
-                case "Base":
-                    ph.TakeDamage(damage);
-                    break;
-                case "Decoy":
-                    if (bb.hp - damage <= 0)
-                    {
-                        bb.hp -= damage;
-                        stopFollowingPath = true;
-                        yield return null;
-                        mainTarget = GameObject.Find("MainBase(Clone)").transform;
-                        PathRequestManager.RequestPath(transform.position, mainTarget.position, onPathFound, mainTarget == GameObject.Find("MainBase(Clone)").transform);
-                        yield break;
-                    }
-                    bb.hp -= damage;
-                    break;
-                default:
-                    if (bb.hp - damage <= 0)
-                    {
-                        bb.hp -= damage;
-                        yield break;
-                    }
-                    bb.hp -= damage;
-                    break;
-            }
-        }
+        other.TakeDamage(damage);
+
+        yield return new WaitForSeconds(damageCooldown);
+        _dealDamage = false;
     }
 }

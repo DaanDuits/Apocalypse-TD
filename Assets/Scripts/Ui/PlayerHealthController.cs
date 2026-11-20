@@ -5,13 +5,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Rendering.PostProcessing;
 using TMPro;
-using TowerDefense.Utilities;
-using TowerDefense.Health;
+using TowerDefense.Utility;
+using TowerDefense;
 
-public class PlayerHpController : MonoBehaviour, IDamageable
+public class PlayerHealthController : MonoBehaviour
 {
     [SerializeField] private Slider slider;
-    private float _playerHP;
+    private float _playerHealth;
     private float _damageSpeed = 4f;
 
     private void Start()
@@ -20,34 +20,34 @@ public class PlayerHpController : MonoBehaviour, IDamageable
         switch (PlayerPrefs.GetInt("Difficulty"))
         {
             case 0:
-                slider.maxValue = 1500;
-                slider.value = 1500;
-                _playerHP = 1500;
+                _playerHealth = 1500;
                 break;
             case 1:
-                slider.maxValue = 1000;
-                slider.value = 1000;
-                _playerHP = 1000;
+                _playerHealth = 1000;
                 break;
             case 2:
-                slider.maxValue = 600;
-                slider.value = 600;
-                _playerHP = 600;
+                _playerHealth = 600;
                 break;
         }
+        slider.maxValue = _playerHealth;
+        slider.value = _playerHealth;
+
+        MainBase.Instance.ResetHealth(_playerHealth);
+        MainBase.Instance.OnGainHealth.AddListener(MainBase_OnGainHealth);
+        MainBase.Instance.OnTakeDamage.AddListener(MainBase_OnTakeDamage);
     }
 
-    public void TakeDamage(float damage)
+    public void MainBase_OnTakeDamage(float damage)
     {
-        float newHP = _playerHP - damage;
-        StartCoroutine(LerpDamage(_playerHP, newHP));
-        _playerHP = newHP;
-        _playerHP = Mathf.Clamp(_playerHP, 0f, slider.maxValue);
+        float newHP = _playerHealth - damage;
+        StartCoroutine(LerpDamage(_playerHealth, newHP));
+        _playerHealth = newHP;
+        _playerHealth = Mathf.Clamp(_playerHealth, 0f, slider.maxValue);
     }
     private IEnumerator LerpDamage(float a, float b)
     {
         float t = 0f;
-        if (_playerHP == 0f && GameObject.Find("GameUI").activeSelf)
+        if (_playerHealth == 0f && GameObject.Find("GameUI").activeSelf)
         {
             Camera.main.GetComponent<PostProcessVolume>().profile.GetSetting<Vignette>().intensity.Override(0.45f);
             List<Unit> activeUnits = Registry<Unit>.Filter(u => u != null).ToList();
@@ -70,16 +70,19 @@ public class PlayerHpController : MonoBehaviour, IDamageable
             yield return null;
         }
     }
-    public IEnumerator GainHp(float amount)
+    public void MainBase_OnGainHealth(float health)
     {
-        float newHP = _playerHP + amount;
-        _playerHP = Mathf.Clamp(newHP, 0f, slider.maxValue);
-        float oldHP = _playerHP;
-
+        float newHP = _playerHealth + health;
+        StartCoroutine(LerpHeal(_playerHealth, newHP));
+        _playerHealth = newHP;
+        _playerHealth = Mathf.Clamp(_playerHealth, 0f, slider.maxValue);
+    }
+    private IEnumerator LerpHeal(float a, float b)
+    {
         float t = 0f;
-        while (slider.value != newHP)
+        while (slider.value != b)
         {
-            slider.value = Mathf.Lerp(oldHP, newHP, t);
+            slider.value = Mathf.Lerp(a, b, t);
 
             t += Time.deltaTime * _damageSpeed;
             t = Mathf.Clamp01(t);

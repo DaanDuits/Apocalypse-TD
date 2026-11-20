@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TowerDefense.Utilities
+namespace TowerDefense.Utility
 {
     public static class Registry<T>
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
 using TMPro;
-using TowerDefense.Utilities;
+using TowerDefense.Utility;
 
 public class EnemyController : MonoBehaviour
 {

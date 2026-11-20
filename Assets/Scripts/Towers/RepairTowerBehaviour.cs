@@ -1,15 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TowerDefense.Health;
+using TowerDefense.Utility;
 using UnityEngine;
 
 public class RepairTowerBehaviour : TowerBehaviour
 {
-    public float repairRate;
-    public int repairAmount;
+    [SerializeField] private GameObject button;
+    [SerializeField] private float repairRate;
+    [SerializeField] private int repairAmount;
     float timerR;
-    public GameObject button;
-    // Start is called before the first frame update
+
     void Start()
     {
         audioSrc = FindObjectOfType<AudioSource>();
@@ -25,29 +27,19 @@ public class RepairTowerBehaviour : TowerBehaviour
         timerR = repairRate;
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (!button.activeSelf)
         {
             if (timerR <= 0)
             {
-                Debug.Log("Repair");
-                if (GetAllBuildingsInRange().Length != 0)
+                if (GetAllBuildingsInRange().Count != 0)
                 {
                     audioSrc.PlayOneShot(clip, .2f);
                 }
-                foreach (GameObject o in GetAllBuildingsInRange())
+                foreach (IHealable h in GetAllBuildingsInRange())
                 {
-                    switch (o.tag)
-                    {
-                        case "Base":
-                            StartCoroutine(FindObjectOfType<PlayerHpController>().GainHp(repairAmount));
-                            break;
-                        default:
-                            o.GetComponent<BuildingBehaviour>().hp += repairAmount;
-                            break;
-                    }
+                    h.GainHealth(repairAmount);
                 }
                 timerR = repairRate;
             }
@@ -55,18 +47,9 @@ public class RepairTowerBehaviour : TowerBehaviour
         }
     }
 
-    GameObject[] GetAllBuildingsInRange()
+    // TODO: Only get Healables that are a building
+    HashSet<IHealable> GetAllBuildingsInRange()
     {
-        GameObject[] objects = FindObjectsOfType<GameObject>();
-        List<GameObject> inRange = new List<GameObject>();
-
-        foreach (GameObject o in objects)
-        {
-            if ((o.CompareTag("Base") || o.CompareTag("Wall") || o.CompareTag("Tower")) && Vector3.Distance(transform.position, o.transform.position) <= range)
-            {
-                inRange.Add(o);
-            }
-        }
-        return inRange.ToArray();
+        return Registry<IHealable>.Items;
     }
 }
