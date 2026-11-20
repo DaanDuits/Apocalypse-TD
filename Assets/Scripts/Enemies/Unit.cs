@@ -247,7 +247,7 @@ public class Unit : MonoBehaviour
         switch (obj.tag)
         {
             case "Base":
-                StartCoroutine(ph.TakeDamage(damage));
+                ph.TakeDamage(damage);
                 break;
             default:
                 bb.hp -= damage;
@@ -259,7 +259,7 @@ public class Unit : MonoBehaviour
             switch (obj.tag)
             {
                 case "Base":
-                    StartCoroutine(ph.TakeDamage(damage));
+                    ph.TakeDamage(damage);
                     break;
                 case "Decoy":
                     if (bb.hp - damage <= 0)
