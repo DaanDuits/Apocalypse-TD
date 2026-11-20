@@ -10,10 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c61e7af7d8dab954d91d8d8f46cdcc7f, type: 3}
-  m_Name: Tower3
+  m_Name: SMG Tower
   m_EditorClassIdentifier: 
-  Name: Tower3
-  price: 35
-  TowerPrefab: {fileID: 943833289863639444, guid: 497d6796a274f4a4ebf13363f178e288, type: 3}
+  Name: SMG Tower
+  price: 10
+  info: A weak, short range weapon that shoots really fast
+  icon: {fileID: 21300000, guid: 8fe7d5cbfb4c89c4587cc25de6385c4b, type: 3}
+  TowerPrefab: {fileID: 943833289863639444, guid: 11706efb8b1b0c04f80e2a6e9d5ece18, type: 3}
   overlayPrefab: {fileID: 2198619111498740741, guid: 9a101c2c04950f8458cdd45d2daecfce, type: 3}
-  shooterPrefab: {fileID: 5726659423690994472, guid: 0854b6da2dc1f3c498c2248520383233, type: 3}
+  shooterPrefab: {fileID: 5726659423690994472, guid: e51368457e7394748951ee358202888d, type: 3}

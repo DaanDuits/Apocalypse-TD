@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 8845ad8af7e040a4591592b973d0a9c7
+guid: 331f68fbf4cbb1941b3df301d8e1f4f5
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -9,7 +9,7 @@ TrueTypeFontImporter:
   characterPadding: 1
   includeFontData: 1
   fontNames:
-  - Zombie City
+  - Insomnia
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0

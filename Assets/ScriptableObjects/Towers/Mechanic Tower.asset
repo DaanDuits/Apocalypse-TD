@@ -10,10 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c61e7af7d8dab954d91d8d8f46cdcc7f, type: 3}
-  m_Name: Tower6
+  m_Name: Mechanic Tower
   m_EditorClassIdentifier: 
-  Name: 
-  price: 50
-  TowerPrefab: {fileID: 4993333576903790461, guid: 19b4d17d7f329c1429f885e31d782d8c, type: 3}
+  Name: Mechanic Tower
+  price: 45
+  info: When placed near other towers or the main base it will heal them.
+  icon: {fileID: 21300000, guid: 06ecf70613ae504429fb122c2ad063d3, type: 3}
+  TowerPrefab: {fileID: 4993333576903790461, guid: dd7ae757d45393e4f81b92a3c2eba7bb, type: 3}
   overlayPrefab: {fileID: 2198619111498740741, guid: 9a101c2c04950f8458cdd45d2daecfce, type: 3}
-  shooterPrefab: {fileID: 0}
+  shooterPrefab: {fileID: 5726659423690994472, guid: 9945a54bad4848d4ba9588748da5d4f6, type: 3}

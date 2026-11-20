@@ -1,46 +1,63 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
+using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.UI;
 
 public class BuildWall : MonoBehaviour
 {
-    Tilemap tileMap;
+    private Tilemap tileMap;
 
-    TowerShop shop;
+    private TowerShop shop;
 
     public List<Vector2> noBuildArea = new List<Vector2>();
 
-    public static BuildWall instance; 
+    public static BuildWall instance;
 
-    bool CanPlace(GameObject wall, Vector2 gridPos)
+    public GameObject cancelButton;
+
+    public GameObject rotateInfo;
+
+    private bool cancelled;
+
+    private bool CanPlace(GameObject wall, Vector2 gridPos)
     {
-        //Check if the given wall can be placed on the given position
-        GameObject[] objects = GameObject.FindObjectsOfType<GameObject>();
-
-        int right = tileMap.HasTile(tileMap.WorldToCell(gridPos)) ? 1 : 0;
-        int left = tileMap.HasTile(tileMap.WorldToCell(gridPos - (Vector2)wall.transform.right)) ? 1 : 0;
-
-        switch (right, left)
+        GameObject[] array = Object.FindObjectsOfType<GameObject>();
+        int num = (tileMap.HasTile(tileMap.WorldToCell(gridPos)) ? 1 : 0);
+        int num2 = (tileMap.HasTile(tileMap.WorldToCell(gridPos - (Vector2)wall.transform.right)) ? 1 : 0);
+        switch (num)
         {
-            case (1, 1):
-                if (noBuildArea.Any(p => p == gridPos) && noBuildArea.Any(p => p == gridPos - (Vector2)wall.transform.right))
+            case 1:
+                switch (num2)
                 {
-                    return false;
+                    case 1:
+                        if (noBuildArea.Any((Vector2 p) => p == gridPos) && noBuildArea.Any((Vector2 p) => p == gridPos - (Vector2)wall.transform.right))
+                        {
+                            return false;
+                        }
+                        break;
+                    case 0:
+                        return false;
                 }
                 break;
-            case (0, 0):
-                return false;
-            case (1, 0):
-                return false;
-            case (0, 1):
-                return false;
+            case 0:
+                switch (num2)
+                {
+                    case 0:
+                        return false;
+                    case 1:
+                        return false;
+                }
+                break;
         }
-        foreach (GameObject o in objects)
+        GameObject[] array2 = array;
+        foreach (GameObject gameObject in array2)
         {
-            if (o != wall && o.CompareTag("Wall") && o.transform.GetChild(0).position == wall.transform.GetChild(0).position || o.CompareTag("Base") && Vector2.Distance(o.transform.position, wall.transform.GetChild(0).position) <= 1f)
+            if ((gameObject != wall && gameObject.CompareTag("Wall") && gameObject.transform.GetChild(0).position == wall.transform.GetChild(0).position) || (gameObject.CompareTag("Base") && Vector2.Distance(gameObject.transform.position, wall.transform.GetChild(0).position) <= 1f))
+            {
                 return false;
+            }
         }
         return true;
     }
@@ -50,27 +67,42 @@ public class BuildWall : MonoBehaviour
         tileMap = GameObject.Find("Level").transform.GetChild(1).GetComponent<Tilemap>();
         shop = GameObject.Find("ShopController").GetComponent<TowerShop>();
         instance = this;
-        GameObject[] area = GameObject.FindGameObjectsWithTag("NoBuild");
-        for (int i = 0; i < area.Length; i++)
+        GameObject[] array = GameObject.FindGameObjectsWithTag("NoBuild");
+        for (int i = 0; i < array.Length; i++)
         {
-            Transform areaT = area[i].transform;
-            for (float x = areaT.position.x - (areaT.localScale.x / 2) + .5f; x <= areaT.position.x + (areaT.localScale.x / 2) - .5f; x++)
+            Transform transform = array[i].transform;
+            for (float num = transform.position.x - transform.localScale.x / 2f + 0.5f; num <= transform.position.x + transform.localScale.x / 2f - 0.5f; num++)
             {
-                for (float y = areaT.position.y - (areaT.localScale.y / 2) + .5f; y <= areaT.position.y + (areaT.localScale.y / 2) - .5f; y++)
+                for (float num2 = transform.position.y - transform.localScale.y / 2f + 0.5f; num2 <= transform.position.y + transform.localScale.y / 2f - 0.5f; num2++)
                 {
-                    noBuildArea.Add(new Vector2(x, y));
+                    noBuildArea.Add(new Vector2(num, num2));
                 }
             }
         }
     }
 
-    public IEnumerator MoveBuildWall(Wall wall, bool isCopy) => MoveBuildWall(wall, isCopy, Vector3.zero);
+    public void CancelBuilding()
+    {
+        cancelled = true;
+    }
+
+    public IEnumerator MoveBuildWall(Wall wall, bool isCopy)
+    {
+        return MoveBuildWall(wall, isCopy, Vector3.zero);
+    }
+
     public IEnumerator MoveBuildWall(Wall wall, bool isCopy, Vector3 rotation)
     {
-        GameObject wallObject = Instantiate(wall.WallPrefab);
-        shop.canBuild = false; 
+        cancelButton.SetActive(value: true);
+        Button.ButtonClickedEvent cancelOnClick = cancelButton.GetComponent<Button>().onClick;
+        cancelOnClick.AddListener(CancelBuilding);
+        rotateInfo.SetActive(value: true);
+        GameObject wallObject = Object.Instantiate(wall.WallPrefab);
+        shop.canBuild = false;
         if (isCopy)
+        {
             wallObject.transform.rotation = Quaternion.Euler(rotation);
+        }
         BoxCollider2D collider = wallObject.GetComponent<BoxCollider2D>();
         if (collider != null)
         {
@@ -78,47 +110,44 @@ public class BuildWall : MonoBehaviour
         }
         while (true)
         {
-            Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            wallObject.transform.position = new Vector3(Mathf.Floor(mousePos.x) + 0.5f, Mathf.Floor(mousePos.y) + 0.5f);
-
+            Vector2 vector = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            wallObject.transform.position = new Vector3(Mathf.Floor(vector.x) + 0.5f, Mathf.Floor(vector.y) + 0.5f);
             if (Input.GetKeyDown(KeyCode.E))
             {
-                wallObject.transform.Rotate(0, 0, -90);
+                wallObject.transform.Rotate(0f, 0f, -90f);
             }
             if (Input.GetKeyDown(KeyCode.Q))
             {
-                wallObject.transform.Rotate(0, 0, 90);
+                wallObject.transform.Rotate(0f, 0f, 90f);
             }
-
-
-            if (Input.GetMouseButtonDown(1))
+            if (Input.GetMouseButtonDown(1) || cancelled)
             {
-                Destroy(wallObject);
+                cancelOnClick.RemoveAllListeners();
+                cancelButton.SetActive(value: false);
+                rotateInfo.SetActive(value: false);
+                Object.Destroy(wallObject);
+                cancelled = false;
                 shop.canBuild = true;
+                yield break;
+            }
+            if (CanPlace(wallObject, wallObject.transform.position) && Input.GetMouseButtonDown(0))
+            {
                 break;
             }
-
-            if (CanPlace(wallObject, wallObject.transform.position))
-            {
-                if (Input.GetMouseButtonDown(0))
-                {
-                    shop.canBuild = true;
-                    shop.counter.Removeresources(wall.price);
-                    if (collider != null)
-                        wallObject.GetComponent<BoxCollider2D>().enabled = true;
-
-                    if (!shop.counter.CheckRemovedResources(wall.price))
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        StartCoroutine(MoveBuildWall(wall, true, wallObject.transform.rotation.eulerAngles));
-                        break;
-                    }
-                }
-            }
             yield return null;
+        }
+        cancelOnClick.RemoveAllListeners();
+        cancelButton.SetActive(value: false);
+        rotateInfo.SetActive(value: false);
+        shop.canBuild = true;
+        shop.counter.Removeresources(wall.price);
+        if (collider != null)
+        {
+            wallObject.GetComponent<BoxCollider2D>().enabled = true;
+        }
+        if (shop.counter.CheckRemovedResources(wall.price))
+        {
+            StartCoroutine(MoveBuildWall(wall, isCopy: true, wallObject.transform.rotation.eulerAngles));
         }
     }
 }
