@@ -39,9 +39,9 @@ public class PlayerHealthController : MonoBehaviour
 
     public void MainBase_OnTakeDamage(float damage)
     {
-        float newHP = _playerHealth - damage;
-        StartCoroutine(LerpDamage(_playerHealth, newHP));
-        _playerHealth = newHP;
+        float newHealth = _playerHealth - damage;
+        StartCoroutine(LerpDamage(_playerHealth, newHealth));
+        _playerHealth = newHealth;
         _playerHealth = Mathf.Clamp(_playerHealth, 0f, slider.maxValue);
     }
     private IEnumerator LerpDamage(float a, float b)
@@ -61,7 +61,7 @@ public class PlayerHealthController : MonoBehaviour
             ui.transform.GetChild(0).GetChild(0).GetComponent<TMP_Text>().text = "You Died";
             ui.transform.GetChild(0).gameObject.SetActive(true);
         }
-        while (slider.value != b)
+        while (t != 1f)
         {
             slider.value = Mathf.Lerp(a, b, t);
 
@@ -73,15 +73,15 @@ public class PlayerHealthController : MonoBehaviour
 
     public void MainBase_OnGainHealth(float health)
     {
-        float newHP = _playerHealth + health;
-        StartCoroutine(LerpHeal(_playerHealth, newHP));
-        _playerHealth = newHP;
+        float newHealth = _playerHealth + health;
+        StartCoroutine(LerpHeal(_playerHealth, newHealth));
+        _playerHealth = newHealth;
         _playerHealth = Mathf.Clamp(_playerHealth, 0f, slider.maxValue);
     }
     private IEnumerator LerpHeal(float a, float b)
     {
         float t = 0f;
-        while (slider.value != b)
+        while (t != 1f)
         {
             slider.value = Mathf.Lerp(a, b, t);
 

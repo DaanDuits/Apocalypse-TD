@@ -171,15 +171,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainTarget: {fileID: 0}
   target: {fileID: 0}
+  reward: 25
   speed: 2.75
+  damageCooldown: 2.5
+  sliderPrefab: {fileID: 4446204865936249754, guid: 7a2c6560949630046b7a995a5c7c7f90, type: 3}
+  red: {r: 1, g: 0, b: 0, a: 1}
+  normal: {r: 1, g: 1, b: 1, a: 1}
   rotationSpeed: 5
   shop: {fileID: 0}
   velocity: {x: 0, y: 0}
-  hp: 100
-  damage: 10
-  reward: 25
-  sliderPrefab: {fileID: 157438869582992476, guid: 7a2c6560949630046b7a995a5c7c7f90, type: 3}
   effectSpeed: 5
-  damageCooldown: 2.5
-  red: {r: 1, g: 0, b: 0, a: 1}
-  normal: {r: 1, g: 1, b: 1, a: 1}
+  _maxHealth: 0
+  _damage: 0

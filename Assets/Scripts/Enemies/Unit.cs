@@ -1,16 +1,24 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TowerDefense.Utility;
 using TowerDefense.Health;
 using System.Linq;
 
-public class Unit : MonoBehaviour
+[RequireComponent(typeof(SpriteRenderer))]
+public class Unit : MonoBehaviour, IDamageable
 {
     public Transform mainTarget;
     public Transform target;
-    public float speed = 20;
+
+    [SerializeField] private int reward;
+    [SerializeField] private float speed = 20f;
+    [SerializeField] private float damageCooldown = 2.5f;
+    [SerializeField] private Slider sliderPrefab;
+
+    [SerializeField] private Color red, normal;
+    [SerializeField] private float colorLerpSpeed = 5f;
+
     Vector2[] path;
     int targetIndex;
     public float rotationSpeed;
@@ -18,48 +26,44 @@ public class Unit : MonoBehaviour
     public TowerShop shop;
 
     public Vector2 velocity;
+    private Slider _slider;
 
-    [SerializeField] private float hp, damage;
-    [SerializeField] private int reward;
-    public GameObject sliderPrefab;
-    GameObject sliderObj;
-    Slider slider;
-
-    //int changeToAgro;
-    float takenDamage;
     public float effectSpeed;
     int changeToDistract;
 
     private bool _dealDamage;
+    private float _damage;
 
-    public float damageCooldown;
+    private float _maxHealth;
+    private float _health;
+
+    private SpriteRenderer _renderer;
 
     private void Awake()
     {
         switch (PlayerPrefs.GetInt("Difficulty"))
         {
             case 0:
-                hp = 75;
-                damage = 10;
+                _maxHealth = 75;
+                _damage = 10;
                 reward = 20;
                 changeToDistract = 5;
-                //changeToAgro = 100;
                 break;
             case 1:
-                hp = 100;
-                damage = 25;
+                _maxHealth = 100;
+                _damage = 25;
                 reward = 15;
                 changeToDistract = 10;
-                //changeToAgro = 60;
                 break;
             case 2:
-                hp = 125;
-                damage = 40;
+                _maxHealth = 125;
+                _damage = 40;
                 reward = 10;
                 changeToDistract = 20;
-                //changeToAgro = 30;
                 break;
         }
+
+        _renderer = GetComponent<SpriteRenderer>();
     }
 
     private void Start()
@@ -71,86 +75,71 @@ public class Unit : MonoBehaviour
         else
             mainTarget = GameObject.Find("MainBase(Clone)").transform;
         PathRequestManager.RequestPath(transform.position, mainTarget.position, onPathFound, mainTarget == GameObject.Find("MainBase(Clone)").transform);
-        takenDamage = hp;
+
         shop = FindObjectOfType<TowerShop>();
-        sliderObj = Instantiate(sliderPrefab, GameObject.Find("WorldCanvas").transform);
-        slider = sliderObj.GetComponent<Slider>();
-        slider.maxValue = hp;
-        slider.value = hp;
+
+        _slider = Instantiate(sliderPrefab, GameObject.Find("WorldCanvas").transform);
+        _slider.maxValue = _maxHealth;
+        _slider.value = _maxHealth;
+        _health = _maxHealth;
     }
 
     private void OnEnable()
     {
         Registry<Unit>.Register(this);
+        Registry<IDamageable>.Register(this);
     }
 
     private void OnDisable()
     {
         Registry<Unit>.Unregister(this);
+        Registry<IDamageable>.Unregister(this);
     }
 
     // Update is called once per frame
     void Update()
     {
-        sliderObj.transform.position = new Vector2(transform.position.x, transform.position.y + 0.4f);
+        _slider.transform.position = new Vector2(transform.position.x, transform.position.y + 0.4f);
+    }
 
-        if (slider.value <= 1f)
-        {
+    public void TakeDamage(float damage)
+    {
+        float newHealth = _health - damage;
+
+        StartCoroutine(LerpDamage(_health, newHealth));
+        StartCoroutine(LerpColors());
+        _health = newHealth;
+        _health = Mathf.Clamp(_health, 0f, _maxHealth);
+
+        if (_health == 0f)
             Destroy(gameObject);
-        }
-        if (slider.value > takenDamage)
-        {
-            slider.value -= 3 * takeDamage * Time.deltaTime;
-        }
     }
 
-    float takeDamage;
-    private void OnTriggerEnter2D(Collider2D collision)
+    private IEnumerator LerpDamage(float a, float b)
     {
-        GameObject go = collision.gameObject;
-        if (go.CompareTag("Projectile"))
+        float t = 0f;
+
+        while (t != 1f)
         {
-            BulletBehaviour bb = go.GetComponent<BulletBehaviour>();
+            _slider.value = Mathf.Lerp(a, b, t);
 
-            takenDamage = slider.value - bb.damage;
-            takeDamage = bb.damage;
-            System.Random rng = new System.Random();
+            t += Time.deltaTime * colorLerpSpeed;
+            t = Mathf.Clamp01(t); 
 
-            Destroy(go, bb.hitLifeTime);
-            StartCoroutine(changeColors());
+            yield return null;
         }
     }
-
-    public Color red, normal;
-    IEnumerator changeColors()
+    private IEnumerator LerpColors()
     {
-        bool toRed = true;
-        while (true)
+        float t = 0f;
+        while ( t != 1f)
         {
-            if (toRed)
-            {
-                if ((GetComponent<SpriteRenderer>().color + red * Time.deltaTime).r >= red.r)
-                {
-                    GetComponent<SpriteRenderer>().color = red;
-                    toRed = false;
-                }
-                else
-                {
-                    GetComponent<SpriteRenderer>().color += red  * Time.deltaTime;
-                }
-            }
-            else
-            {
-                if ((GetComponent<SpriteRenderer>().color - red * Time.deltaTime).r <= normal.r)
-                {
-                    GetComponent<SpriteRenderer>().color = normal;
-                    break;
-                }
-                else
-                {
-                    GetComponent<SpriteRenderer>().color -= red * Time.deltaTime;
-                }
-            }
+            Debug.Log(t);
+
+            _renderer.color = Color.Lerp(normal, red, -4f * Mathf.Pow(t, 2) + 4f * t);
+
+            t += Time.deltaTime * colorLerpSpeed;
+            t = Mathf.Clamp01(t);
             yield return null;
         }
     }
@@ -158,7 +147,7 @@ public class Unit : MonoBehaviour
     private void OnDestroy()
     {
         shop.counter.Addresources(reward);
-        Destroy(sliderObj);
+        Destroy(_slider.gameObject);
     }
 
     public void onPathFound(Vector2[] newPath, bool pathSuccesful)
@@ -248,7 +237,7 @@ public class Unit : MonoBehaviour
     {
         while (_dealDamage)
         {
-            other.TakeDamage(damage);
+            other.TakeDamage(_damage);
 
             yield return new WaitForSeconds(damageCooldown);
 

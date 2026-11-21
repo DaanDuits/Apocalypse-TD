@@ -38,7 +38,7 @@ public class TowerBehaviour : MonoBehaviour
                 BulletBehaviour bB = pro.GetComponent<BulletBehaviour>();
                 Unit eB = GetClosestEnemy();
 
-                if (InterceptionDirection(GetClosestEnemy().transform.position, barrel.position, eB.velocity, bB.speed, out Vector2 result, out Vector2 fullResult))
+                if (InterceptionDirection(GetClosestEnemy().transform.position, barrel.position, eB.velocity, bB.Speed, out Vector2 result, out Vector2 fullResult))
                 {
                     float angle = Mathf.Atan2(result.y, result.x) * Mathf.Rad2Deg - 90f + rotationOffset;
                     transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.AngleAxis(angle, transform.forward), Time.deltaTime * rotationSpeed);
@@ -47,7 +47,6 @@ public class TowerBehaviour : MonoBehaviour
                         float rnd = Random.Range(-fireSpread, fireSpread) / 100;
                         bB.Setup(fullResult + new Vector2(rnd, rnd), transform.parent);
                         audioSrc.PlayOneShot(clip);
-                        Destroy(pro, bB.airTime);
                         if (i == bulletAmount - 1)
                             timer = fireRate;
                     }
