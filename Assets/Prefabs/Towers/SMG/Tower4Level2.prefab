@@ -113,7 +113,7 @@ MonoBehaviour:
   shooterUpgrade: {fileID: 5726659423690994472, guid: ec15572c2dd87454d921f79a935a4bf6, type: 3}
   nextCost: 30
   isWall: 0
-  SellCost: 65
+  SellCost: 25
 --- !u!60 &1484532864588464929
 PolygonCollider2D:
   m_ObjectHideFlags: 0

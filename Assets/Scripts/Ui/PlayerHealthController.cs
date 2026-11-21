@@ -47,7 +47,7 @@ public class PlayerHealthController : MonoBehaviour
     private IEnumerator LerpDamage(float a, float b)
     {
         float t = 0f;
-        if (_playerHealth == 0f && GameObject.Find("GameUI").activeSelf)
+        if (b == 0f && GameObject.Find("GameUI").activeSelf)
         {
             Camera.main.GetComponent<PostProcessVolume>().profile.GetSetting<Vignette>().intensity.Override(0.45f);
             List<Unit> activeUnits = Registry<Unit>.Filter(u => u != null).ToList();

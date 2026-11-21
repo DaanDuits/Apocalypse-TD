@@ -28,8 +28,6 @@ public class Unit : MonoBehaviour
     //int changeToAgro;
     float takenDamage;
     public float effectSpeed;
-
-    public List<string> tags;
     int changeToDistract;
 
     private bool _dealDamage;
@@ -226,7 +224,9 @@ public class Unit : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (_dealDamage || collision.gameObject.GetComponent<Building>() == null)
+        if (collision.gameObject.GetComponent<Building>() == null)
+            return;
+        if (_dealDamage)
             return;
 
         _dealDamage = true;
@@ -236,6 +236,8 @@ public class Unit : MonoBehaviour
     }
     private void OnCollisionExit2D(Collision2D collision)
     {
+        if (collision.gameObject.GetComponent<Building>() == null)
+            return;
         if (!_dealDamage)
             return;
 
