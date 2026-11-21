@@ -226,20 +226,32 @@ public class Unit : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (_dealDamage)
+        if (_dealDamage || collision.gameObject.GetComponent<Building>() == null)
             return;
 
         _dealDamage = true;
         velocity = Vector2.zero;
         IDamageable other = Registry<IDamageable>.Filter(d => d == collision.gameObject.GetComponent<IDamageable>()).First();
-        DealDamage(other);
+        StartCoroutine(DealDamage(other));
+    }
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (!_dealDamage)
+            return;
+
+        _dealDamage = false;
     }
 
     private IEnumerator DealDamage(IDamageable other)
     {
-        other.TakeDamage(damage);
+        while (_dealDamage)
+        {
+            other.TakeDamage(damage);
 
-        yield return new WaitForSeconds(damageCooldown);
-        _dealDamage = false;
+            yield return new WaitForSeconds(damageCooldown);
+
+            if (other == null)
+                _dealDamage = false;
+        }
     }
 }

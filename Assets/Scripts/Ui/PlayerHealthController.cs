@@ -70,6 +70,7 @@ public class PlayerHealthController : MonoBehaviour
             yield return null;
         }
     }
+
     public void MainBase_OnGainHealth(float health)
     {
         float newHP = _playerHealth + health;
@@ -89,6 +90,5 @@ public class PlayerHealthController : MonoBehaviour
 
             yield return null;
         }
-
     }
 }
