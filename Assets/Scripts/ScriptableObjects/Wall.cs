@@ -1,15 +1,28 @@
 using UnityEngine;
+using TowerDefense.Building;
 
 [CreateAssetMenu(fileName = "NewWall", menuName = "TowerDefense/Wall")]
 public class Wall : ScriptableObject
 {
-	public string Name;
+	[SerializeField] private new string name;
 
-	public int price;
+    [SerializeField] private int price;
+    [SerializeField] private string info;
+    [SerializeField] private Sprite icon;
 
-	public string info;
+    [SerializeField] private Structure wallPrefab;
 
-	public Sprite icon;
+    public string Name
+    { get => name; }
 
-	public GameObject WallPrefab;
+    public int Price
+    { get => price; }
+    public string Info
+    { get => info; }
+    public Sprite Icon
+    { get => icon; }
+
+    public Structure WallPrefab
+    { get => wallPrefab; }
+
 }

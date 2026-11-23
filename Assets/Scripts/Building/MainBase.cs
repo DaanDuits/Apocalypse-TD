@@ -1,9 +1,8 @@
-using UnityEngine;
 using UnityEngine.Events;
 
-namespace TowerDefense
+namespace TowerDefense.Building
 {
-    public class MainBase : Building
+    public class MainBase : Structure
     {
         public UnityEvent<float> OnTakeDamage
         { get; private set; } = new UnityEvent<float>();

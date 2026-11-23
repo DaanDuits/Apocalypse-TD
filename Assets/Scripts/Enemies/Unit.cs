@@ -1,9 +1,10 @@
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using TowerDefense.Utility;
 using TowerDefense.Health;
-using System.Linq;
+using TowerDefense.Building;
 
 [RequireComponent(typeof(SpriteRenderer))]
 public class Unit : MonoBehaviour, IDamageable
@@ -76,7 +77,7 @@ public class Unit : MonoBehaviour, IDamageable
             mainTarget = GameObject.Find("MainBase(Clone)").transform;
         PathRequestManager.RequestPath(transform.position, mainTarget.position, onPathFound, mainTarget == GameObject.Find("MainBase(Clone)").transform);
 
-        shop = FindObjectOfType<TowerShop>();
+        shop = FindAnyObjectByType<TowerShop>();
 
         _slider = Instantiate(sliderPrefab, GameObject.Find("WorldCanvas").transform);
         _slider.maxValue = _maxHealth;
@@ -213,7 +214,7 @@ public class Unit : MonoBehaviour, IDamageable
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.GetComponent<Building>() == null)
+        if (collision.gameObject.GetComponent<Structure>() == null)
             return;
         if (_dealDamage)
             return;
@@ -225,7 +226,7 @@ public class Unit : MonoBehaviour, IDamageable
     }
     private void OnCollisionExit2D(Collision2D collision)
     {
-        if (collision.gameObject.GetComponent<Building>() == null)
+        if (collision.gameObject.GetComponent<Structure>() == null)
             return;
         if (!_dealDamage)
             return;

@@ -105,7 +105,7 @@ public class DataPersistanceManager : MonoBehaviour
 
     List<IDataPersistance> FindAllDataPersistanceObjects()
     {
-        IEnumerable<IDataPersistance> dataPersistanceObjects = FindObjectsOfType<MonoBehaviour>(true).OfType<IDataPersistance>();
+        IEnumerable<IDataPersistance> dataPersistanceObjects = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<IDataPersistance>();
         return new List<IDataPersistance>(dataPersistanceObjects);
     }
 

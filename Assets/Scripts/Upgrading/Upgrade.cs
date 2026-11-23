@@ -1,8 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using TowerDefense.Operator;
 
 public class Upgrade : MonoBehaviour
 {
@@ -43,11 +42,11 @@ public class Upgrade : MonoBehaviour
             {
                 rC = Instantiate(rangeCircle);
                 rC.transform.position = data.transform.position;
-                TowerBehaviour tB = data.transform.GetChild(0).gameObject.GetComponent<TowerBehaviour>();
-                if (tB.range >= 8f)
+                ITowerOperator tB = data.transform.GetChild(0).gameObject.GetComponent<ITowerOperator>();
+                if (tB.Range >= 8f)
                     rC.transform.localScale = new Vector2(2, 2);
                 else
-                    rC.transform.localScale = new Vector2(tB.range * 2, tB.range * 2);
+                    rC.transform.localScale = new Vector2(tB.Range * 2, tB.Range * 2);
             }
             
 

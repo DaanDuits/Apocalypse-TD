@@ -31,7 +31,7 @@ public class EnemyController : MonoBehaviour
     {
         Camera.main.GetComponent<PostProcessVolume>().profile.GetSetting<Vignette>().intensity.Override(0f);
         button = GameObject.Find("StartWaveB");
-        startLevel = FindObjectOfType<StartLevel>();
+        startLevel = FindAnyObjectByType<StartLevel>();
 
         GameObject map = Instantiate(maps[PlayerPrefs.GetInt("MapIndex")], grid);
         map.name = "Level";

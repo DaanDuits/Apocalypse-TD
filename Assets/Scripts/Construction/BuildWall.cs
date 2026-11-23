@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
+using TowerDefense.Building;
 
 public class BuildWall : MonoBehaviour
 {
@@ -21,9 +22,9 @@ public class BuildWall : MonoBehaviour
 
     private bool cancelled;
 
-    private bool CanPlace(GameObject wall, Vector2 gridPos)
+    private bool CanPlace(Structure wall, Vector2 gridPos)
     {
-        GameObject[] array = Object.FindObjectsOfType<GameObject>();
+        GameObject[] array = FindObjectsByType<GameObject>(FindObjectsSortMode.None);
         int num = (tileMap.HasTile(tileMap.WorldToCell(gridPos)) ? 1 : 0);
         int num2 = (tileMap.HasTile(tileMap.WorldToCell(gridPos - (Vector2)wall.transform.right)) ? 1 : 0);
         switch (num)
@@ -51,8 +52,7 @@ public class BuildWall : MonoBehaviour
                 }
                 break;
         }
-        GameObject[] array2 = array;
-        foreach (GameObject gameObject in array2)
+        foreach (GameObject gameObject in array)
         {
             if ((gameObject != wall && gameObject.CompareTag("Wall") && gameObject.transform.GetChild(0).position == wall.transform.GetChild(0).position) || (gameObject.CompareTag("Base") && Vector2.Distance(gameObject.transform.position, wall.transform.GetChild(0).position) <= 1f))
             {
@@ -97,7 +97,7 @@ public class BuildWall : MonoBehaviour
         Button.ButtonClickedEvent cancelOnClick = cancelButton.GetComponent<Button>().onClick;
         cancelOnClick.AddListener(CancelBuilding);
         rotateInfo.SetActive(value: true);
-        GameObject wallObject = Object.Instantiate(wall.WallPrefab);
+        Structure wallObject = Instantiate(wall.WallPrefab);
         shop.canBuild = false;
         if (isCopy)
         {
@@ -140,12 +140,12 @@ public class BuildWall : MonoBehaviour
         cancelButton.SetActive(value: false);
         rotateInfo.SetActive(value: false);
         shop.canBuild = true;
-        shop.counter.Removeresources(wall.price);
+        shop.counter.Removeresources(wall.Price);
         if (collider != null)
         {
             wallObject.GetComponent<BoxCollider2D>().enabled = true;
         }
-        if (shop.counter.CheckRemovedResources(wall.price))
+        if (shop.counter.CheckRemovedResources(wall.Price))
         {
             StartCoroutine(MoveBuildWall(wall, isCopy: true, wallObject.transform.rotation.eulerAngles));
         }

@@ -19,13 +19,13 @@ public class TowerShop : MonoBehaviour
     {
         if (tower != null)
         {
-            if (counter.CheckRemovedResources(tower.price) && canBuild)
+            if (counter.CheckRemovedResources(tower.Price) && canBuild)
                 StartCoroutine(buildT.MoveBuildTower(tower));
         }
 
         else
         {
-            if (counter.CheckRemovedResources(wall.price) && canBuild)
+            if (counter.CheckRemovedResources(wall.Price) && canBuild)
                 StartCoroutine(buildW.MoveBuildWall(wall, false));
         }
     }

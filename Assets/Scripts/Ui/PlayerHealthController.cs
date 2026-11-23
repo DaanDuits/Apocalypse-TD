@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using UnityEngine.Rendering.PostProcessing;
 using TMPro;
 using TowerDefense.Utility;
-using TowerDefense;
+using TowerDefense.Building;
 
 public class PlayerHealthController : MonoBehaviour
 {

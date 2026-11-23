@@ -24,8 +24,8 @@ public class InfoBehaviour : MonoBehaviour
 		shopPanel.SetActive(value: false);
 		image.transform.rotation = Quaternion.Euler(0f, 0f, -45f);
 		uiName.text = wall.name;
-		image.sprite = wall.icon;
-		info.text = wall.info;
+		image.sprite = wall.Icon;
+		info.text = wall.Info;
 	}
 
 	public void SetPanel(Tower tower)
@@ -34,8 +34,8 @@ public class InfoBehaviour : MonoBehaviour
 		shopPanel.SetActive(value: false);
 		image.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
 		uiName.text = tower.name;
-		image.sprite = tower.icon;
-		info.text = tower.info;
+		image.sprite = tower.Icon;
+		info.text = tower.Info;
 	}
 
 	public void ExitPanel()

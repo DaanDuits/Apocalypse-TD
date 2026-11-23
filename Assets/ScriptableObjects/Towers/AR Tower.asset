@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c61e7af7d8dab954d91d8d8f46cdcc7f, type: 3}
   m_Name: AR Tower
   m_EditorClassIdentifier: 
-  Name: AR Tower
+  name: AR Tower
   price: 25
   info: A strong, medium ranged weapon that shoots fast
   icon: {fileID: 21300000, guid: b79b45d8612027f4dae8fe2625e6a192, type: 3}
-  TowerPrefab: {fileID: 3967508563086857449, guid: b39990f58cb8d2a4482f34bdd4ff981e, type: 3}
+  towerPrefab: {fileID: -2333900139251391664, guid: b39990f58cb8d2a4482f34bdd4ff981e, type: 3}
   overlayPrefab: {fileID: 2198619111498740741, guid: 9a101c2c04950f8458cdd45d2daecfce, type: 3}
-  shooterPrefab: {fileID: 5726659423690994472, guid: 9ee636c3da3e8a444a4cc416e84021d6, type: 3}
+  operatorPrefab: {fileID: 5726659423690994472, guid: 9ee636c3da3e8a444a4cc416e84021d6, type: 3}

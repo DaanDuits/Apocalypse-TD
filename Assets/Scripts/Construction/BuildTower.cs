@@ -3,6 +3,9 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
+using TowerDefense.Building;
+using TowerDefense.Operator;
+using TowerDefense.Utility;
 
 public class BuildTower : MonoBehaviour
 {
@@ -22,21 +25,19 @@ public class BuildTower : MonoBehaviour
 
     private bool cancelled;
 
-    private bool CanPlace(GameObject tower, Vector2 gridPos)
+    private bool CanPlace(Structure tower, Vector2 gridPos)
     {
-        GameObject[] array = Object.FindObjectsOfType<GameObject>();
         if (!tileMap.HasTile(tileMap.WorldToCell(gridPos)) || BuildWall.instance.noBuildArea.Any((Vector2 p) => p == gridPos))
-        {
             return false;
-        }
-        GameObject[] array2 = array;
-        foreach (GameObject gameObject in array2)
+
+        foreach (Structure building in Registry<Structure>.Filter(s => s != tower))
         {
-            if ((gameObject != tower && (Vector2)gameObject.transform.position == gridPos && gameObject.CompareTag("Tower")) || (gameObject.CompareTag("Base") && Vector2.Distance(gameObject.transform.position, gridPos) <= 1f))
-            {
+            if ((Vector2)building.transform.position == gridPos)
                 return false;
-            }
         }
+        if (Registry<Structure>.Filter(s => s.GetComponent<MainBase>() != null && Vector2.Distance(s.transform.position, gridPos) <= 1f).Count() > 0)
+            return false;
+
         return true;
     }
 
@@ -53,11 +54,11 @@ public class BuildTower : MonoBehaviour
 
     public IEnumerator MoveBuildTower(Tower tower)
     {
-        cancelButton.SetActive(value: true);
+        cancelButton.SetActive(true);
         Button.ButtonClickedEvent cancelOnClick = cancelButton.GetComponent<Button>().onClick;
         cancelOnClick.AddListener(CancelBuilding);
-        GameObject towerObject = Object.Instantiate(tower.TowerPrefab);
-        GameObject overlay = Object.Instantiate(Overlay);
+        Structure towerObject = Instantiate(tower.TowerPrefab);
+        GameObject overlay = Instantiate(Overlay);
         shop.canBuild = false;
         Collider2D collider = towerObject.GetComponent<Collider2D>();
         if (collider != null)
@@ -65,16 +66,16 @@ public class BuildTower : MonoBehaviour
             towerObject.GetComponent<Collider2D>().enabled = false;
         }
         overlay.GetComponent<SpriteRenderer>().color = Green;
-        if (tower.shooterPrefab != null)
+        if (tower.OperatorPrefab != null)
         {
-            TowerBehaviour component = tower.shooterPrefab.GetComponent<TowerBehaviour>();
-            if (component.range >= 8f)
+            ITowerOperator component = tower.OperatorPrefab.GetComponent<ITowerOperator>();
+            if (component.Range >= 8f)
             {
                 rangeCircle.transform.localScale = new Vector2(2f, 2f);
             }
             else
             {
-                rangeCircle.transform.localScale = new Vector2(component.range * 2f, component.range * 2f);
+                rangeCircle.transform.localScale = new Vector2(component.Range * 2f, component.Range * 2f);
             }
         }
         Vector2 vector;
@@ -82,7 +83,7 @@ public class BuildTower : MonoBehaviour
         {
             vector = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             towerObject.transform.position = vector;
-            if (tower.shooterPrefab != null)
+            if (tower.OperatorPrefab != null)
             {
                 rangeCircle.SetActive(value: true);
                 rangeCircle.transform.position = vector;
@@ -93,8 +94,8 @@ public class BuildTower : MonoBehaviour
                 rangeCircle.SetActive(value: false);
                 cancelOnClick.RemoveAllListeners();
                 cancelButton.SetActive(value: false);
-                Object.Destroy(overlay);
-                Object.Destroy(towerObject);
+                Destroy(overlay);
+                Destroy(towerObject);
                 cancelled = false;
                 shop.canBuild = true;
                 yield break;
@@ -116,13 +117,13 @@ public class BuildTower : MonoBehaviour
         rangeCircle.SetActive(value: false);
         cancelOnClick.RemoveAllListeners();
         cancelButton.SetActive(value: false);
-        shop.counter.Removeresources(tower.price);
+        shop.counter.Removeresources(tower.Price);
         towerObject.transform.position = new Vector3(Mathf.Floor(vector.x) + 0.5f, Mathf.Floor(vector.y) + 0.5f);
-        if (tower.shooterPrefab != null)
+        if (tower.OperatorPrefab != null)
         {
-            Object.Instantiate(tower.shooterPrefab, towerObject.transform).transform.position = towerObject.transform.position;
+            Instantiate(tower.OperatorPrefab, towerObject.transform).transform.position = towerObject.transform.position;
         }
-        Object.Destroy(overlay);
+        Destroy(overlay);
         shop.canBuild = true;
         if (collider != null)
         {
