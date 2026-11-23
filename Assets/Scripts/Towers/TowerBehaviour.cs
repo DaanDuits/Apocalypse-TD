@@ -2,8 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using TowerDefense.Utility;
 using System.Linq;
-using TowerDefense.Health;
-using UnityEngine.Rendering;
 
 public class TowerBehaviour : MonoBehaviour
 {

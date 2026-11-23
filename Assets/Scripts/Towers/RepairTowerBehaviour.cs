@@ -10,7 +10,7 @@ public class RepairTowerBehaviour : TowerBehaviour
     [SerializeField] private GameObject button;
     [SerializeField] private float repairRate;
     [SerializeField] private int repairAmount;
-    float timerR;
+    private float _timer;
 
     void Start()
     {
@@ -24,14 +24,14 @@ public class RepairTowerBehaviour : TowerBehaviour
                 break;
             }
         }
-        timerR = repairRate;
+        _timer = repairRate;
     }
 
     void Update()
     {
         if (!button.activeSelf)
         {
-            if (timerR <= 0)
+            if (_timer <= 0)
             {
                 if (GetAllBuildingsInRange().Count != 0)
                 {
@@ -41,9 +41,9 @@ public class RepairTowerBehaviour : TowerBehaviour
                 {
                     h.GainHealth(repairAmount);
                 }
-                timerR = repairRate;
+                _timer = repairRate;
             }
-            timerR -= Time.deltaTime;
+            _timer -= Time.deltaTime;
         }
     }
 
