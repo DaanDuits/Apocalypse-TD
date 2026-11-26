@@ -33,7 +33,7 @@ namespace TowerDefense.Operator
             if (collision.gameObject.GetComponent<Unit>() == null)
                 return;
 
-            IDamageable damageable = Registry<IDamageable>.Filter(d => d == collision.GetComponent<IDamageable>()).First();
+            IDamageable damageable = collision.GetComponent<IDamageable>();
             damageable.TakeDamage(damage);
             Destroy(gameObject, hitLifeTime);
         }

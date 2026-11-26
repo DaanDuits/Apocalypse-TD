@@ -6979,7 +6979,6 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 58cc38fd4c9a7ab4f8c945a8a37b2cae, type: 3}
   possibleSpawns: []
   spawnSpeed: 0.5
-  unitsInGame: []
   grid: {fileID: 2145841395}
   maps:
   - {fileID: 1947742073633398159, guid: 0e64a899677ce8d45b503f338916f672, type: 3}

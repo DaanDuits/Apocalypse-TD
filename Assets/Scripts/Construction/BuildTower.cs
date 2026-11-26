@@ -25,17 +25,17 @@ public class BuildTower : MonoBehaviour
 
     private bool cancelled;
 
-    private bool CanPlace(Structure tower, Vector2 gridPos)
+    private bool CanPlace(Structure tower)
     {
-        if (!tileMap.HasTile(tileMap.WorldToCell(gridPos)) || BuildWall.instance.noBuildArea.Any((Vector2 p) => p == gridPos))
+        if (!tileMap.HasTile(tileMap.WorldToCell(tower.Center)) || BuildWall.instance.noBuildArea.Any(p => p == tower.Center))
             return false;
 
-        foreach (Structure building in Registry<Structure>.Filter(s => s != tower))
+        foreach (Structure building in Registry<Structure>.Filter(s => s != tower && s.GetComponent<Wall>() == null))
         {
-            if ((Vector2)building.transform.position == gridPos)
+            if (building.Center == tower.Center)
                 return false;
         }
-        if (Registry<Structure>.Filter(s => s.GetComponent<MainBase>() != null && Vector2.Distance(s.transform.position, gridPos) <= 1f).Count() > 0)
+        if (Registry<Structure>.Filter(s => s.GetComponent<MainBase>() != null && Vector2.Distance(s.transform.position, tower.Center) <= Mathf.Sqrt(2f)).Count() > 0)
             return false;
 
         return true;
@@ -52,7 +52,7 @@ public class BuildTower : MonoBehaviour
         cancelled = true;
     }
 
-    public IEnumerator MoveBuildTower(Tower tower)
+    public IEnumerator MoveBuildTower(TowerBlueprint tower)
     {
         cancelButton.SetActive(true);
         Button.ButtonClickedEvent cancelOnClick = cancelButton.GetComponent<Button>().onClick;
@@ -95,12 +95,12 @@ public class BuildTower : MonoBehaviour
                 cancelOnClick.RemoveAllListeners();
                 cancelButton.SetActive(value: false);
                 Destroy(overlay);
-                Destroy(towerObject);
+                Destroy(towerObject.gameObject);
                 cancelled = false;
                 shop.canBuild = true;
                 yield break;
             }
-            if (CanPlace(towerObject, overlay.transform.position))
+            if (CanPlace(towerObject))
             {
                 overlay.GetComponent<SpriteRenderer>().color = Green;
                 if (Input.GetMouseButtonDown(0))

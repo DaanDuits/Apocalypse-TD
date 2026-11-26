@@ -59,7 +59,7 @@ public class BasePlacing : MonoBehaviour
     {
         x += 0.5f;
         y += 0.5f;
-        if (BuildWall.instance.noBuildArea.Any(p => p == new Vector2(x, y) || p == new Vector2(x - 1, y) || p == new Vector2(x - 1, y - 1) || p == new Vector2(x, y - 1)))
+        if (BuildWall.instance.noBuildArea.Any(p => p == new Vector3(x, y) || p == new Vector3(x - 1, y) || p == new Vector3(x - 1, y - 1) || p == new Vector3(x, y - 1)))
         {
             return false;
         }

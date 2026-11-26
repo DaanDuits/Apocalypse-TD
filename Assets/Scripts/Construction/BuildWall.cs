@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 using TowerDefense.Building;
+using TowerDefense.Utility;
 
 public class BuildWall : MonoBehaviour
 {
@@ -12,7 +13,7 @@ public class BuildWall : MonoBehaviour
 
     private TowerShop shop;
 
-    public List<Vector2> noBuildArea = new List<Vector2>();
+    public List<Vector3> noBuildArea = new List<Vector3>();
 
     public static BuildWall instance;
 
@@ -22,43 +23,24 @@ public class BuildWall : MonoBehaviour
 
     private bool cancelled;
 
-    private bool CanPlace(Structure wall, Vector2 gridPos)
+    private bool CanPlace(Wall target)
     {
-        GameObject[] array = FindObjectsByType<GameObject>(FindObjectsSortMode.None);
-        int num = (tileMap.HasTile(tileMap.WorldToCell(gridPos)) ? 1 : 0);
-        int num2 = (tileMap.HasTile(tileMap.WorldToCell(gridPos - (Vector2)wall.transform.right)) ? 1 : 0);
-        switch (num)
+        if (!tileMap.HasTile(tileMap.WorldToCell(target.Center)))
+            return false;
+
+        if (!tileMap.HasTile(tileMap.WorldToCell(target.Center - target.transform.right)))
+            return false;
+
+        if (noBuildArea.Any(p => p == target.Center) && noBuildArea.Any(p => p == target.Center - target.transform.right))
+            return false;
+
+        foreach (Wall wall in Registry<Wall>.Filter(w => w != target))
         {
-            case 1:
-                switch (num2)
-                {
-                    case 1:
-                        if (noBuildArea.Any((Vector2 p) => p == gridPos) && noBuildArea.Any((Vector2 p) => p == gridPos - (Vector2)wall.transform.right))
-                        {
-                            return false;
-                        }
-                        break;
-                    case 0:
-                        return false;
-                }
-                break;
-            case 0:
-                switch (num2)
-                {
-                    case 0:
-                        return false;
-                    case 1:
-                        return false;
-                }
-                break;
-        }
-        foreach (GameObject gameObject in array)
-        {
-            if ((gameObject != wall && gameObject.CompareTag("Wall") && gameObject.transform.GetChild(0).position == wall.transform.GetChild(0).position) || (gameObject.CompareTag("Base") && Vector2.Distance(gameObject.transform.position, wall.transform.GetChild(0).position) <= 1f))
-            {
+            if (wall.Position == target.Position)
                 return false;
-            }
         }
+        if (Registry<Structure>.Filter(s => s.GetComponent<MainBase>() != null && Vector2.Distance(s.transform.position, target.Position) <= 1f).Count() > 0)
+            return false;
         return true;
     }
 
@@ -71,11 +53,11 @@ public class BuildWall : MonoBehaviour
         for (int i = 0; i < array.Length; i++)
         {
             Transform transform = array[i].transform;
-            for (float num = transform.position.x - transform.localScale.x / 2f + 0.5f; num <= transform.position.x + transform.localScale.x / 2f - 0.5f; num++)
+            for (float x = transform.position.x - transform.localScale.x / 2f + 0.5f; x <= transform.position.x + transform.localScale.x / 2f - 0.5f; x++)
             {
-                for (float num2 = transform.position.y - transform.localScale.y / 2f + 0.5f; num2 <= transform.position.y + transform.localScale.y / 2f - 0.5f; num2++)
+                for (float y = transform.position.y - transform.localScale.y / 2f + 0.5f; y <= transform.position.y + transform.localScale.y / 2f - 0.5f; y++)
                 {
-                    noBuildArea.Add(new Vector2(num, num2));
+                    noBuildArea.Add(new Vector2(x, y));
                 }
             }
         }
@@ -86,18 +68,18 @@ public class BuildWall : MonoBehaviour
         cancelled = true;
     }
 
-    public IEnumerator MoveBuildWall(Wall wall, bool isCopy)
+    public IEnumerator MoveBuildWall(WallBlueprint wall, bool isCopy)
     {
         return MoveBuildWall(wall, isCopy, Vector3.zero);
     }
 
-    public IEnumerator MoveBuildWall(Wall wall, bool isCopy, Vector3 rotation)
+    public IEnumerator MoveBuildWall(WallBlueprint wall, bool isCopy, Vector3 rotation)
     {
-        cancelButton.SetActive(value: true);
+        cancelButton.SetActive(true);
         Button.ButtonClickedEvent cancelOnClick = cancelButton.GetComponent<Button>().onClick;
         cancelOnClick.AddListener(CancelBuilding);
-        rotateInfo.SetActive(value: true);
-        Structure wallObject = Instantiate(wall.WallPrefab);
+        rotateInfo.SetActive(true);
+        Wall wallObject = Instantiate(wall.WallPrefab);
         shop.canBuild = false;
         if (isCopy)
         {
@@ -125,12 +107,12 @@ public class BuildWall : MonoBehaviour
                 cancelOnClick.RemoveAllListeners();
                 cancelButton.SetActive(value: false);
                 rotateInfo.SetActive(value: false);
-                Object.Destroy(wallObject);
+                Destroy(wallObject.gameObject);
                 cancelled = false;
                 shop.canBuild = true;
                 yield break;
             }
-            if (CanPlace(wallObject, wallObject.transform.position) && Input.GetMouseButtonDown(0))
+            if (CanPlace(wallObject) && Input.GetMouseButtonDown(0))
             {
                 break;
             }

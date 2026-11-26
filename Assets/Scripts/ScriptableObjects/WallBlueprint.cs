@@ -2,7 +2,7 @@ using UnityEngine;
 using TowerDefense.Building;
 
 [CreateAssetMenu(fileName = "NewWall", menuName = "TowerDefense/Wall")]
-public class Wall : ScriptableObject
+public class WallBlueprint : ScriptableObject
 {
 	[SerializeField] private new string name;
 
@@ -10,7 +10,7 @@ public class Wall : ScriptableObject
     [SerializeField] private string info;
     [SerializeField] private Sprite icon;
 
-    [SerializeField] private Structure wallPrefab;
+    [SerializeField] private Wall wallPrefab;
 
     public string Name
     { get => name; }
@@ -22,7 +22,7 @@ public class Wall : ScriptableObject
     public Sprite Icon
     { get => icon; }
 
-    public Structure WallPrefab
+    public Wall WallPrefab
     { get => wallPrefab; }
 
 }

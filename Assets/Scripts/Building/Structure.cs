@@ -9,24 +9,25 @@ namespace TowerDefense.Building
         [SerializeField] private float maxHealth;
 
         private float _health;
+        public Vector3 Center
+        { get => transform.position; }
 
         protected float MaxHealth
         { set => maxHealth = value; }
         protected float Health
         { set => _health = value; }
-
         private void Start()
         {
             _health = maxHealth;
         }
 
-        private void OnEnable()
+        protected void OnEnable()
         {
             Registry<IDamageable>.Register(this);
             Registry<IHealable>.Register(this);
             Registry<Structure>.Register(this);
         }
-        private void OnDisable()
+        protected void OnDisable()
         {
             Registry<IDamageable>.Unregister(this);
             Registry<IHealable>.Unregister(this);

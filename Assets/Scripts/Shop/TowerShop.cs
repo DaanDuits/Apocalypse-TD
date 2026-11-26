@@ -13,9 +13,9 @@ public class TowerShop : MonoBehaviour
 
     public bool canBuild = true;
 
-    public void Build(Tower tower) => Build(null, tower);
-    public void Build(Wall wall) => Build(wall, null);
-    public void Build(Wall wall, Tower tower)
+    public void Build(TowerBlueprint tower) => Build(null, tower);
+    public void Build(WallBlueprint wall) => Build(wall, null);
+    public void Build(WallBlueprint wall, TowerBlueprint tower)
     {
         if (tower != null)
         {

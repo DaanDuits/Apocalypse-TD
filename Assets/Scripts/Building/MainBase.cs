@@ -5,9 +5,9 @@ namespace TowerDefense.Building
     public class MainBase : Structure
     {
         public UnityEvent<float> OnTakeDamage
-        { get; private set; } = new UnityEvent<float>();
+        { get; } = new UnityEvent<float>();
         public UnityEvent<float> OnGainHealth
-        { get; private set; } = new UnityEvent<float>();
+        { get; } = new UnityEvent<float>();
 
         public static MainBase Instance
         {  get; private set; }

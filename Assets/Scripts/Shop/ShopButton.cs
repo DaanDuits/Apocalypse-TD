@@ -5,9 +5,9 @@ using UnityEngine;
 public class ShopButton : MonoBehaviour
 {
     [SerializeField]
-    Tower tower;
+    TowerBlueprint tower;
     [SerializeField]
-    Wall wall;
+    WallBlueprint wall;
 
     TowerShop shop;
 

@@ -18,7 +18,7 @@ public class InfoBehaviour : MonoBehaviour
 	{
 	}
 
-	public void SetPanel(Wall wall)
+	public void SetPanel(WallBlueprint wall)
 	{
 		infoPanel.SetActive(value: true);
 		shopPanel.SetActive(value: false);
@@ -28,7 +28,7 @@ public class InfoBehaviour : MonoBehaviour
 		info.text = wall.Info;
 	}
 
-	public void SetPanel(Tower tower)
+	public void SetPanel(TowerBlueprint tower)
 	{
 		infoPanel.SetActive(value: true);
 		shopPanel.SetActive(value: false);

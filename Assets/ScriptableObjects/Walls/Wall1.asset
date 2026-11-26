@@ -16,4 +16,4 @@ MonoBehaviour:
   price: 5
   info: 
   icon: {fileID: 739626340, guid: 2b283b6c6cbd7d744a78ce13f098245c, type: 3}
-  wallPrefab: {fileID: -5590819146508801109, guid: deb67aaaf1ee50c4b836b18971cd3ef5, type: 3}
+  wallPrefab: {fileID: 5391676419419115309, guid: deb67aaaf1ee50c4b836b18971cd3ef5, type: 3}

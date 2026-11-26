@@ -2,7 +2,7 @@ using UnityEngine;
 using TowerDefense.Building;
 
 [CreateAssetMenu(fileName = "NewTower", menuName = "TowerDefense/Tower")]
-public class Tower : ScriptableObject
+public class TowerBlueprint : ScriptableObject
 {
     [SerializeField] private new string name;
 
