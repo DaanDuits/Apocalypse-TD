@@ -1,10 +1,9 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 using TowerDefense.Building;
+using TowerDefense.Construction;
 using TowerDefense.Utility;
 
 public class BuildWall : MonoBehaviour
@@ -13,25 +12,20 @@ public class BuildWall : MonoBehaviour
 
     private TowerShop shop;
 
-    public List<Vector3> noBuildArea = new List<Vector3>();
-
-    public static BuildWall instance;
-
     public GameObject cancelButton;
 
     public GameObject rotateInfo;
 
-    private bool cancelled;
+    private bool _cancelled;
 
     private bool CanPlace(Wall target)
     {
-        if (!tileMap.HasTile(tileMap.WorldToCell(target.Center)))
+        if (!TileZoneBank.Get(TileZoneType.Build).HasTile(target.Center) || !TileZoneBank.Get(TileZoneType.Build).HasTile(target.Center - target.transform.right))
             return false;
 
-        if (!tileMap.HasTile(tileMap.WorldToCell(target.Center - target.transform.right)))
+        if (TileZoneBank.Get(TileZoneType.NoBuild).HasTile(target.Center) && TileZoneBank.Get(TileZoneType.NoBuild).HasTile(target.Center - target.transform.right))
             return false;
-
-        if (noBuildArea.Any(p => p == target.Center) && noBuildArea.Any(p => p == target.Center - target.transform.right))
+        if (TileZoneBank.Get(TileZoneType.MainBase).HasTile(target.Center) && TileZoneBank.Get(TileZoneType.MainBase).HasTile(target.Center - target.transform.right))
             return false;
 
         foreach (Wall wall in Registry<Wall>.Filter(w => w != target))
@@ -39,8 +33,6 @@ public class BuildWall : MonoBehaviour
             if (wall.Position == target.Position)
                 return false;
         }
-        if (Registry<Structure>.Filter(s => s.GetComponent<MainBase>() != null && Vector2.Distance(s.transform.position, target.Position) <= 1f).Count() > 0)
-            return false;
         return true;
     }
 
@@ -48,24 +40,11 @@ public class BuildWall : MonoBehaviour
     {
         tileMap = GameObject.Find("Level").transform.GetChild(1).GetComponent<Tilemap>();
         shop = GameObject.Find("ShopController").GetComponent<TowerShop>();
-        instance = this;
-        GameObject[] array = GameObject.FindGameObjectsWithTag("NoBuild");
-        for (int i = 0; i < array.Length; i++)
-        {
-            Transform transform = array[i].transform;
-            for (float x = transform.position.x - transform.localScale.x / 2f + 0.5f; x <= transform.position.x + transform.localScale.x / 2f - 0.5f; x++)
-            {
-                for (float y = transform.position.y - transform.localScale.y / 2f + 0.5f; y <= transform.position.y + transform.localScale.y / 2f - 0.5f; y++)
-                {
-                    noBuildArea.Add(new Vector2(x, y));
-                }
-            }
-        }
     }
 
     public void CancelBuilding()
     {
-        cancelled = true;
+        _cancelled = true;
     }
 
     public IEnumerator MoveBuildWall(WallBlueprint wall, bool isCopy)
@@ -102,13 +81,13 @@ public class BuildWall : MonoBehaviour
             {
                 wallObject.transform.Rotate(0f, 0f, 90f);
             }
-            if (Input.GetMouseButtonDown(1) || cancelled)
+            if (Input.GetMouseButtonDown(1) || _cancelled)
             {
                 cancelOnClick.RemoveAllListeners();
                 cancelButton.SetActive(value: false);
                 rotateInfo.SetActive(value: false);
                 Destroy(wallObject.gameObject);
-                cancelled = false;
+                _cancelled = false;
                 shop.canBuild = true;
                 yield break;
             }

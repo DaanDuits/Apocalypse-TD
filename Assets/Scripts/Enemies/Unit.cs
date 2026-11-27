@@ -38,6 +38,8 @@ public class Unit : MonoBehaviour, IDamageable
     private float _maxHealth;
     private float _health;
 
+    private IEnumerator _currentDamageLoop;
+
     private SpriteRenderer _renderer;
 
     private void Awake()
@@ -222,7 +224,9 @@ public class Unit : MonoBehaviour, IDamageable
         _dealDamage = true;
         velocity = Vector2.zero;
         IDamageable other = Registry<IDamageable>.Filter(d => d == collision.gameObject.GetComponent<IDamageable>()).First();
-        StartCoroutine(DealDamage(other));
+
+        _currentDamageLoop = DealDamage(other);
+        StartCoroutine(_currentDamageLoop);
     }
     private void OnCollisionExit2D(Collision2D collision)
     {
@@ -232,6 +236,7 @@ public class Unit : MonoBehaviour, IDamageable
             return;
 
         _dealDamage = false;
+        StopCoroutine(_currentDamageLoop);
     }
 
     private IEnumerator DealDamage(IDamageable other)

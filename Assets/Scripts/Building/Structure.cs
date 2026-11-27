@@ -6,19 +6,19 @@ namespace TowerDefense.Building
 {
     public class Structure : MonoBehaviour, IDamageable, IHealable
     {
-        [SerializeField] private float maxHealth;
+        [SerializeField] private float _maxHealth;
 
         private float _health;
         public Vector3 Center
         { get => transform.position; }
 
         protected float MaxHealth
-        { set => maxHealth = value; }
+        { set => _maxHealth = value; }
         protected float Health
         { set => _health = value; }
         private void Start()
         {
-            _health = maxHealth;
+            _health = _maxHealth;
         }
 
         protected void OnEnable()
@@ -37,20 +37,18 @@ namespace TowerDefense.Building
         private void Update()
         {
             if (_health == 0)
-            {
                 Destroy(gameObject);
-            }
         }
 
         public virtual void TakeDamage(float damage)
         {
             _health -= damage;
-            _health = Mathf.Clamp(_health, 0, maxHealth);
+            _health = Mathf.Clamp(_health, 0, _maxHealth);
         }
         public virtual void GainHealth(float health)
         {
             _health += health;
-            _health = Mathf.Clamp(_health, 0, maxHealth);
+            _health = Mathf.Clamp(_health, 0, _maxHealth);
         }
     }
 }

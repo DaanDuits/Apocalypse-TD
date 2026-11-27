@@ -1,11 +1,10 @@
 using System.Collections;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 using TowerDefense.Building;
+using TowerDefense.Construction;
 using TowerDefense.Operator;
-using TowerDefense.Utility;
 
 public class BuildTower : MonoBehaviour
 {
@@ -17,8 +16,6 @@ public class BuildTower : MonoBehaviour
 
     public GameObject rangeCircle;
 
-    private Tilemap tileMap;
-
     private TowerShop shop;
 
     public GameObject cancelButton;
@@ -27,15 +24,11 @@ public class BuildTower : MonoBehaviour
 
     private bool CanPlace(Structure tower)
     {
-        if (!tileMap.HasTile(tileMap.WorldToCell(tower.Center)) || BuildWall.instance.noBuildArea.Any(p => p == tower.Center))
+        if (TileZoneBank.Get(TileZoneType.NoBuild).HasTile(tower.Center)) 
             return false;
-
-        foreach (Structure building in Registry<Structure>.Filter(s => s != tower && s.GetComponent<Wall>() == null))
-        {
-            if (building.Center == tower.Center)
-                return false;
-        }
-        if (Registry<Structure>.Filter(s => s.GetComponent<MainBase>() != null && Vector2.Distance(s.transform.position, tower.Center) <= Mathf.Sqrt(2f)).Count() > 0)
+        if (TileZoneBank.Get(TileZoneType.Occupied).HasTile(tower.Center))
+            return false;
+        if (!TileZoneBank.Get(TileZoneType.Build).HasTile(tower.Center))
             return false;
 
         return true;
@@ -43,7 +36,6 @@ public class BuildTower : MonoBehaviour
 
     private void Start()
     {
-        tileMap = GameObject.Find("Level").transform.GetChild(1).GetComponent<Tilemap>();
         shop = GameObject.Find("ShopController").GetComponent<TowerShop>();
     }
 
@@ -105,6 +97,7 @@ public class BuildTower : MonoBehaviour
                 overlay.GetComponent<SpriteRenderer>().color = Green;
                 if (Input.GetMouseButtonDown(0))
                 {
+                    TileZoneBank.Get(TileZoneType.Occupied).SetTile(towerObject.Center);
                     break;
                 }
             }

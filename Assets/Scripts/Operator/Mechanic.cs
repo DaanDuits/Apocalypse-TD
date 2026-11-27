@@ -38,7 +38,6 @@ namespace TowerDefense.Operator
             float timer = 0f;
             while (true)
             {
-                _audioSrc.PlayOneShot(clip, 0.2f);
                 foreach (IHealable h in GetAllBuildingsInRange())
                 {
                     h.GainHealth(repairAmount);
@@ -50,7 +49,10 @@ namespace TowerDefense.Operator
                 yield return null;
 
                 if (timer == 1f)
+                {
+                    _audioSrc.PlayOneShot(clip, 0.2f);
                     timer = 0f;
+                }
             }
         }
 
