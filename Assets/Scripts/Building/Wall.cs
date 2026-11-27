@@ -14,6 +14,9 @@ namespace TowerDefense.Building
             Registry<Wall>.Register(this);
         }
 
+        protected override void OnDie()
+        { }
+
         private new void OnDisable()
         {
             base.OnDisable();

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
+using TowerDefense.Construction;
 
 public class EndScreenButtons : MonoBehaviour, IDataPersistance
 {
@@ -19,17 +20,20 @@ public class EndScreenButtons : MonoBehaviour, IDataPersistance
     public void Restart()
     {
         DataPersistanceManager.instance.SaveGame();
+        TileZoneBank.Clear();
         SceneManager.LoadScene("Level");
     }
 
     public void LevelMap()
     {
         DataPersistanceManager.instance.SaveGame();
+        TileZoneBank.Clear();
         SceneManager.LoadScene("WorldMap");
     }
     public void MainMenu()
     {
         DataPersistanceManager.instance.SaveGame();
+        TileZoneBank.Clear();
         SceneManager.LoadScene("MainMenu");
     }
     public void QuitGame()

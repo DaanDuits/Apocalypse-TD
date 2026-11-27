@@ -1,3 +1,4 @@
+using TowerDefense.Construction;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -35,6 +36,11 @@ namespace TowerDefense.Building
                 Destroy(gameObject);
 
             Instance = this;
+        }
+
+        protected override void OnDie()
+        {
+            TileZoneBank.Get(TileZoneType.Occupied).RemoveTileMatrix2x2(TileMatrix);
         }
 
         public void ResetHealth(float value)

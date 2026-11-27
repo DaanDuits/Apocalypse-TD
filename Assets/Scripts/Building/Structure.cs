@@ -1,6 +1,8 @@
-using UnityEngine;
+using TowerDefense.Construction;
 using TowerDefense.Health;
 using TowerDefense.Utility;
+using Unity.IO.LowLevel.Unsafe;
+using UnityEngine;
 
 namespace TowerDefense.Building
 {
@@ -37,7 +39,15 @@ namespace TowerDefense.Building
         private void Update()
         {
             if (_health == 0)
+            {
                 Destroy(gameObject);
+                OnDie();
+            }
+        }
+
+        protected virtual void OnDie()
+        {
+            TileZoneBank.Get(TileZoneType.Occupied).RemoveTile(Center);
         }
 
         public virtual void TakeDamage(float damage)

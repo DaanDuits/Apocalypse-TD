@@ -22,6 +22,10 @@ namespace TowerDefense.Construction
         {
             _tilemap.SetTile(_tilemap.WorldToCell(position), _tile);
         }
+        public void RemoveTile(Vector3 position)
+        {
+            _tilemap.SetTile(_tilemap.WorldToCell(position), null);
+        }
         public bool HasTile(Vector3 position)
         {
             return _tilemap.HasTile(_tilemap.WorldToCell(position));
@@ -33,6 +37,13 @@ namespace TowerDefense.Construction
             _tilemap.SetTile(_tilemap.WorldToCell(matrix.TopRight), _tile);
             _tilemap.SetTile(_tilemap.WorldToCell(matrix.BottomLeft), _tile);
             _tilemap.SetTile(_tilemap.WorldToCell(matrix.BottomRight), _tile);
+        }
+        public void RemoveTileMatrix2x2(TileMatrix2x2 matrix)
+        {
+            _tilemap.SetTile(_tilemap.WorldToCell(matrix.TopLeft), null);
+            _tilemap.SetTile(_tilemap.WorldToCell(matrix.TopRight), null);
+            _tilemap.SetTile(_tilemap.WorldToCell(matrix.BottomLeft), null);
+            _tilemap.SetTile(_tilemap.WorldToCell(matrix.BottomRight), null);
         }
         public bool HasTileMatrix2x2(TileMatrix2x2 matrix)
         {
