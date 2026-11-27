@@ -17,6 +17,10 @@ namespace TowerDefense.Construction
         {
             _zones.TryAdd(zoneType, instance);
         }
+        public static void Clear()
+        {
+            _zones.Clear();
+        }
 
         public static TileZone Get(TileZoneType zoneType)
         {

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TowerDefense.Construction;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -44,11 +45,13 @@ public class PauseMenu : MonoBehaviour
 
     public void OnWorldMap()
     {
+        TileZoneBank.Clear();
         SceneManager.LoadSceneAsync("WorldMap");
     }
 
     public void OnMainMenu()
     {
+        TileZoneBank.Clear();
         SceneManager.LoadSceneAsync("MainMenu");
     }
 
